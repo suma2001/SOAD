@@ -61,7 +61,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'Sidekick.urls'
+ROOT_URLCONF = 'Sunshine.urls'
 
 TEMPLATES = [
     {
@@ -79,7 +79,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Sidekick.wsgi.application'
+WSGI_APPLICATION = 'Sunshine.wsgi.application'
 
 
 # Database
@@ -98,7 +98,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'your_password',
+        'PASSWORD': 'Shreya@2001',
         'HOST': 'localhost',
         'PORT': '5432',
     }
