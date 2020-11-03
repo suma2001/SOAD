@@ -26,12 +26,12 @@ export default function Benefits() {
     <Grid container className={classes.root} spacing={3} style={{margin: "3% 0"}}>
       <Grid item xs={12}>
         <Grid container justify="space-around" spacing={3}>
-          <Grid container direction="row" justify="space-evenly" xs={3} style={{marginTop: "1%"}} >
-              <TwitterIcon fontSize="large" style={{color: "#EFBC9B"}}/>
-              <InstagramIcon fontSize="large" style={{color: "#EFBC9B"}}/>
-              <FacebookIcon fontSize="large" style={{color: "#EFBC9B"}}/>
+          <Grid container direction="row" justify="space-evenly" md={3} xs={12} style={{margin: "2%"}} >
+              <TwitterIcon fontSize="large" style={{color: "#EFBC9B", marginTop: "2%"}} />
+              <InstagramIcon fontSize="large" style={{color: "#EFBC9B", marginTop: "2%"}}/>
+              <FacebookIcon fontSize="large" style={{color: "#EFBC9B", marginTop: "2%"}}/>
           </Grid>
-          <Grid xs={3} container direction="column" justify="center" alignItems="center" >
+          <Grid md={3} xs={12} container direction="column" justify="center" alignItems="center" style={{margin: "2%"}}>
               <Typography variant="h3" style={{color: "#EFBC9B"}}>
                   Senior Sunshine
               </Typography>
@@ -39,7 +39,7 @@ export default function Benefits() {
                   Making aging a happy process
               </Typography>
           </Grid>
-          <Grid xs={3} container direction="column" justify="center" alignItems="center" >
+          <Grid md={3} xs={12} container direction="column" justify="center" alignItems="center" style={{margin: "2%"}}>
               <Typography variant="h5" style={{color: "#EFBC9B"}}>
                 <CopyrightIcon style={{marginRight: "5px", color: "#EFBC9B"}} />
                 Copyright 2020

@@ -27,7 +27,7 @@ export default function HomeHero() {
     <Grid container className={classes.root} spacing={3} style={{margin: "3% 0"}}>
       <Grid item xs={12}>
         <Grid container justify="space-around" spacing={3}>
-          <Grid xs={4}>
+          <Grid md={4} xs={8}>
               <Typography variant="h3" style={{marginTop: "12%"}}>
                   Envision a community where aging is a positive experience
               </Typography>

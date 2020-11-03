@@ -26,10 +26,10 @@ export default function Benefits() {
 
   return (
     <Container style={{backgroundColor: "#efeaf0"}} className={classes.control}>
-    <Grid container className={classes.root} spacing={3} style={{margin: "3% 0"}}>
+    <Grid container className={classes.root} spacing={3} style={{marginBottom: "3%", marginTop: "1%"}}>
       <Grid item xs={12}>
         <Grid container justify="space-around" spacing={3}>
-          <Grid container direction="column" justify="center" alignItems="center" xs={3} >
+          <Grid container direction="column" justify="center" alignItems="center" xs={12} md={3} style={{margin: "2%"}}>
               <ErrorIcon fontSize="large" color="primary"/>
               <Typography variant="h3">
                   Goal
@@ -38,7 +38,7 @@ export default function Benefits() {
                   Connect elderly with young adults. Should add some more content in this part
               </Typography>
           </Grid>
-          <Grid xs={3} container direction="column" justify="center" alignItems="center" >
+          <Grid xs={12} md={3} container direction="column" justify="center" alignItems="center" style={{margin: "2%"}}>
               <EmojiEmotionsIcon fontSize="large" color="primary"/>
               <Typography variant="h3">
                   Interactive
@@ -47,7 +47,7 @@ export default function Benefits() {
                   User-friendly UI to make it accessible and easy for the seniors to interact with the website
               </Typography>
           </Grid>
-          <Grid xs={3} container direction="column" justify="center" alignItems="center" >
+          <Grid xs={12} md={3} container direction="column" justify="center" alignItems="center" style={{margin: "2%"}}>
               <SignalCellularAltIcon fontSize="large" color="primary"/>
               <Typography variant="h3">
                   Connectivity
@@ -59,21 +59,25 @@ export default function Benefits() {
         </Grid>
       </Grid>
     </Grid>
+    <Container>
     <Paper style={{backgroundColor: "#63326E"}} variant="outlined" elevation={2}>
-    <Grid container direction="column" justify="center" alignItems="center" xs={4} style={{margin: "5% 33%"}} >
+    <Grid container direction="column" justify="center" alignItems="center" xs={12} style={{margin: "5% 0"}}>
         <Typography variant="body2" style={{fontSize: "20px", fontWeight: "500", marginBottom: "2%"}}>
             SOLUTION
         </Typography>
         <Typography variant="h3" style={{color: "#EFBC9B"}}>
             Unlock the Potential
         </Typography>
-        <Typography variant="body2" align="center" style={{fontWeight: "500"}}>
+        <Grid md={4} xs={12} >
+        <Typography variant="body2"align="center" style={{fontWeight: "500"}}>
             A website that connects seniors with young volunteers to 
             help them with their daily tasks, activities and also have 
             a buddy to talk to when they want company
         </Typography>
+        </Grid>
     </Grid>
     </Paper>
+    </Container>
     </Container>
   );
 }

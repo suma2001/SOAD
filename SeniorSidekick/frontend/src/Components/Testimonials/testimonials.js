@@ -32,15 +32,15 @@ export default function Testimonials() {
             <Container>
                 <Grid item xs={12}>
                     <Grid container justify="space-between" spacing={3}>
-                        <Grid xs={3} container direction="column" justify="center" alignItems="center" >
+                        <Grid md={3} xs={12} container direction="column" justify="center" alignItems="center" >
                             <Avatar alt="person1" src={p1} className={classes.large} />
                             <p>A really helpful app/service!</p>
                         </Grid>
-                        <Grid xs={3} container direction="column" justify="center" alignItems="center" >
+                        <Grid md={3} xs={12} container direction="column" justify="center" alignItems="center" >
                             <Avatar alt="person2" src={p2} className={classes.large} />
                             <p>A really helpful app/service!</p>
                         </Grid>
-                        <Grid xs={3} container direction="column" justify="center" alignItems="center" >
+                        <Grid md={3} xs={12} container direction="column" justify="center" alignItems="center" >
                             <Avatar alt="person3" src={p3} className={classes.large} />
                             <p>A really helpful app/service!</p>
                         </Grid>
@@ -52,15 +52,15 @@ export default function Testimonials() {
             <Container>
                 <Grid item xs={12}>
                     <Grid container justify="space-between" spacing={3}>
-                        <Grid xs={3} container direction="column" justify="center" alignItems="center" >
+                        <Grid  md={3} xs={12} container direction="column" justify="center" alignItems="center" >
                             <Avatar alt="person4" src={p4} className={classes.large} />
                             <p>A really helpful app/service!</p>
                         </Grid>
-                        <Grid xs={3} container direction="column" justify="center" alignItems="center" >
+                        <Grid  md={3} xs={12} container direction="column" justify="center" alignItems="center" >
                             <Avatar alt="person5" src={p5} className={classes.large} />
                             <p>A really helpful app/service!</p>
                         </Grid>
-                        <Grid xs={3} container direction="column" justify="center" alignItems="center" >
+                        <Grid  md={3} xs={12} container direction="column" justify="center" alignItems="center" >
                             <Avatar alt="person1" src={p1} className={classes.large} />
                             <p>A really helpful app/service!</p>
                         </Grid>
@@ -72,15 +72,15 @@ export default function Testimonials() {
             <Container>
                 <Grid item xs={12}>
                     <Grid container justify="space-between" spacing={3}>
-                        <Grid xs={3} container direction="column" justify="center" alignItems="center" >
+                        <Grid  md={3} xs={12} container direction="column" justify="center" alignItems="center" >
                             <Avatar alt="person2" src={p2} className={classes.large} />
                             <p>A really helpful app/service!</p>
                         </Grid>
-                        <Grid xs={3} container direction="column" justify="center" alignItems="center" >
+                        <Grid  md={3} xs={12} container direction="column" justify="center" alignItems="center" >
                             <Avatar alt="person5" src={p5} className={classes.large} />
                             <p>A really helpful app/service!</p>
                         </Grid>
-                        <Grid xs={3} container direction="column" justify="center" alignItems="center" >
+                        <Grid  md={3} xs={12} container direction="column" justify="center" alignItems="center" >
                             <Avatar alt="person4" src={p4} className={classes.large} />
                             <p>A really helpful app/service!</p>
                         </Grid>
