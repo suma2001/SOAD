@@ -9,6 +9,7 @@
 # For the full list of settings and their values, see
 # https://docs.djangoproject.com/en/2.2/ref/settings/
 """
+import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 # BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'api',
+    'django.contrib.gis',
 ]
 
 
@@ -95,10 +97,10 @@ WSGI_APPLICATION = 'Sunshine.wsgi.application'
 DATABASES = {
 
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'postgres',
         'USER': 'postgres', 
-        'PASSWORD': 'Enter your password',
+        'PASSWORD': 'hemanth21k',
         'HOST': 'localhost',
         'PORT': '5432',  #check your port number
     }
@@ -141,3 +143,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#GDAL path
+if os.name == 'nt':
+    import platform
+    OSGEO4W = r"C:\OSGeo4W"
+    if '64' in platform.architecture()[0]:
+        OSGEO4W += "64"
+    assert os.path.isdir(OSGEO4W), "Directory does not exist: " + OSGEO4W
+    os.environ['OSGEO4W_ROOT'] = OSGEO4W
+    os.environ['GDAL_DATA'] = "C:\Program Files\GDAL\gdal-data"
+    os.environ['PROJ_LIB'] = OSGEO4W + r"\share\proj"
+    GDAL_LIBRARY_PATH = r'C:\OSGeo4W64\bin\gdal300'
+    os.environ['PATH'] = OSGEO4W + r"\bin;" + os.environ['PATH']
