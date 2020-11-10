@@ -5,7 +5,7 @@ matrix:
       before_script:
         - cd ./SeniorSidekick/backend/Sunshine/
       install:
-        - pip install -r . ./SeniorSidekick/backend/Sunshine/requirements.txt
+        - pip install -r ./SeniorSidekick/backend/Sunshine/requirements.txt
       script:
         - python manage.py test
         
