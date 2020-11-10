@@ -1,0 +1,24 @@
+	• Services Schema
+		○ Name
+		○ Description
+	
+	• Volunteer Schema
+		○ Email
+		○ Password
+		○ Volunteer Name
+		○ Volunteer Age
+		○ Address
+		○ Phone No
+		○ Biography kind of thing
+		○ Availability - Boolean 
+		○ Services available for - list
+		○ Experience - list
+		○ Experience points (*)
+		
+	• Old people Schema
+		○ Email
+		○ Password
+		○ Name
+		○ Age
+		○ Address (auto location if possible)
+		○ Phone No
