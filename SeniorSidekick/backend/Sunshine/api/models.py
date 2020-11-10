@@ -33,16 +33,16 @@ class Volunteer(models.Model):
     profile_id = models.AutoField(primary_key=True, auto_created=True)
     email = models.EmailField(max_length=100)
     password = models.CharField(max_length=50)
-    volunteer_name = models.CharField(max_length=50)
+    volunteer_name = models.CharField(max_length=50, null=True)
     volunteer_age = models.IntegerField(validators=[MinValueValidator(5), MaxValueValidator(100)])
     phone_number = models.CharField(max_length=13)
-    address = models.ForeignKey('Address', on_delete=models.PROTECT)
-    location = models.PointField(default=None)
-    biography = models.TextField()
+    address = models.ForeignKey('Address', on_delete=models.PROTECT, null=True)
+    location = models.PointField(null=True)
+    biography = models.TextField(null=True)
     availability = models.BooleanField(default=False)
-    services_available = models.ForeignKey('Service', on_delete=models.CASCADE)
+    services_available = models.ForeignKey('Service', on_delete=models.CASCADE, null=True)
     experience = ArrayField(
-        models.IntegerField()
+        models.IntegerField(), null=True
     )
 
     def __str__(self):

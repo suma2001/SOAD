@@ -20,3 +20,9 @@ class ElderProfileSerializer(serializers.ModelSerializer):
         model = Elder
         fields = ['elder_id', 'email', 'password', 'elder_name', 'elder_age',
                   'phone_no', 'address']
+
+
+class VolunteerRegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Volunteer
+        fields = ['email', 'password', 'volunteer_age', 'phone_number']

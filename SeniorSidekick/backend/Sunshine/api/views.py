@@ -4,7 +4,7 @@ from rest_framework.parsers import JSONParser
 from .serializers import *
 from .models import *
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.views import APIView
 from django.contrib.gis.measure import D
 from django.contrib.gis.db.models.functions import Distance
@@ -66,6 +66,14 @@ class ProfileAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class ProfileCreate(generics.ListCreateAPIView):
+    queryset = Volunteer.objects.all()
+    serializer_class = VolunteerRegisterSerializer
+
+class ElderCreate(generics.ListCreateAPIView):
+    queryset = Elder.objects.all()
+    serializer_class = ElderProfileSerializer
 
 class ProfileDetailsView(APIView):
 
