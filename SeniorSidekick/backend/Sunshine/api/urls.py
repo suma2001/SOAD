@@ -1,16 +1,10 @@
 from django.contrib import admin
 from django.urls import path
 from .views import *
-from rest_framework.urlpatterns import format_suffix_patterns
 urlpatterns = [
     # path('article/', article_list),
-    path('services/', ServicesAPIView.as_view()),
-    path('service/<int:id>/', ServicesDetailsView.as_view()),
-    path('profiles/', ProfileAPIView.as_view()),
-    path('profile/<int:id>/', ProfileDetailsView.as_view()),
-    path('elders/',ElderListView.as_view()),
-    path('elders/<int:id>/',ElderDetailView.as_view()),
-    path('volunteers/<int:id>/',GetVolunteers.as_view())
+    path('services/', ServicesAPIView.as_view(),name='services'),
+    path('service/<int:id>/', ServicesDetailsView.as_view(), name = 'service_detail'),
+    path('profiles/', ProfileAPIView.as_view(),name = 'profile'),
+    path('profile/<int:id>/', ProfileDetailsView.as_view(),name = 'profile_detail'),
 ]
-
-urlpatterns = format_suffix_patterns(urlpatterns)
