@@ -64,8 +64,8 @@ class SignIn extends React.Component {
     this.state = {
       email : '',
       password: '',
-      volunteer_age: '',
-      phone_number: '',
+      elder_age: '',
+      phone_no: '',
     }
   }
 
@@ -75,7 +75,7 @@ class SignIn extends React.Component {
 
   handleSubmit = (event) => {
     var body = this.state
-    fetch('http://127.0.0.1:8000/api/volunteer-signup/', {
+    fetch('http://127.0.0.1:8000/api/elder-signup/', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -91,7 +91,7 @@ class SignIn extends React.Component {
   }
 
   render() {
-    const { email, password, volunteer_age, phone_number } = this.state;
+    const { email, password, elder_age, phone_no } = this.state;
     const { classes } = this.props;
 
       return (
@@ -149,26 +149,26 @@ class SignIn extends React.Component {
                   margin="normal"
                   required
                   fullWidth
-                  name="volunteer_age"
+                  name="elder_age"
                   label="Age"
                   type="number"
-                  value={volunteer_age}
+                  value={elder_age}
                   onChange={this.handleChange}
-                  id="volunteer_age"
-                  autoComplete="volunteer_age"
+                  id="elder_age"
+                  autoComplete="elder_age"
                 />
                 <TextField
                   variant="outlined"
                   margin="normal"
                   required
                   fullWidth
-                  name="phone_number"
+                  name="phone_no"
                   label="Phone Number"
                   type="number"
-                  value={phone_number}
+                  value={phone_no}
                   onChange={this.handleChange}
-                  id="phone_number"
-                  autoComplete="phone_number"
+                  id="phone_no"
+                  autoComplete="phone_no"
                 />
                 <FormControlLabel
                   control={<Checkbox value="remember" color="primary" />}
@@ -185,7 +185,7 @@ class SignIn extends React.Component {
                 </Button>
                 <Grid container>
                   <Grid container direction="row" justify="flex-end" alignItems="flex-end">
-                    <Link href="#" variant="body2">
+                    <Link href="/elder-login" variant="body2">
                       {"Already have an account? Sign In"}
                     </Link>
                   </Grid>

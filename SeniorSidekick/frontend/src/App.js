@@ -5,8 +5,10 @@ import theme from './theme';
 import Header from './Components/Header/header';
 import Footer from './Components/Footer/footer';
 import Home from './Pages/Home/home';
-import Login from './Pages/Login/login';
-import Register from './Pages/Register/register';
+import VolunteerLogin from './Pages/Login/volunteerLogin';
+import VolunteerRegister from './Pages/Register/volunteerRegister';
+import ElderLogin from './Pages/Login/elderLogin';
+import ElderRegister from './Pages/Register/elderRegister';
 import RequestService from './Pages/RequestService/service';
 import VolunteerList from './Pages/VolunteerList/vlist';
 import Profile from './Pages/Profile/profile';
@@ -22,11 +24,17 @@ function App() {
         <Route exact path="/">
           <Home />
         </Route>
-        <Route exact path="/login">
-          <Login />
+        <Route exact path="/volunteer-login">
+          <VolunteerLogin />
         </Route>
-        <Route exact path="/register">
-          <Register />
+        <Route exact path="/volunteer-register">
+          <VolunteerRegister />
+        </Route>
+        <Route exact path="/elder-login">
+          <ElderLogin />
+        </Route>
+        <Route exact path="/elder-register">
+          <ElderRegister />
         </Route>
         {/*<Route exact path="/request-service">
           <RequestService />

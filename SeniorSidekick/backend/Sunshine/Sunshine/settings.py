@@ -24,7 +24,7 @@ SECRET_KEY = 'p@zpav54#$p2)9*k$@hr4&k#-&^73kw7cn$g1jz4l0&ylwrh1u'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -36,8 +36,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'corsheaders',
     'rest_framework',
+    'rest_framework.authtoken',
     'api',
     'django.contrib.gis',
 ]
@@ -46,6 +48,9 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
     ],
     # 'DEFAULT_RENDERER_CLASSES': [
     #     'rest_framework.renderers.JSONRenderer',
@@ -84,8 +89,10 @@ TEMPLATES = [
     },
 ]
 
+SITE_ID = 1
 WSGI_APPLICATION = 'Sunshine.wsgi.application'
 
+AUTH_USER_MODEL = 'api.Volunteer'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
@@ -133,7 +140,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -146,6 +153,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'prahithamovva@gmail.com'
+EMAIL_HOST_PASSWORD = 'Prahitha@108'
 
 #GDAL path
 if os.name == 'nt':
