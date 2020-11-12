@@ -51,7 +51,7 @@ class VolunteerRegisterSerializer(serializers.ModelSerializer):
 class ElderRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Elder
-        fields = ['email', 'password', 'elder_age', 'phone_no']
+        fields = ['email', 'username', 'password', 'elder_age', 'phone_no']
 
     def validate(self, attrs):
         email = attrs.get('email', '')

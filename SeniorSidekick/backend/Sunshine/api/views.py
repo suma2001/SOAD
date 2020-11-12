@@ -158,7 +158,7 @@ class ElderCreate(generics.GenericAPIView):
         message = {'email_body': email_body, 'email_subject': 'Email Verification for Senior Sunshine', 'to_email': (user.email, )}
         Util.send_email(message)
         user_data['token'] = token.key
-        user_data['user_id'] = user.id
+        user_data['elder_id'] = user.id
         return Response(user_data, status=status.HTTP_201_CREATED)
 
 class ElderVerifyEmail(generics.GenericAPIView):
@@ -262,23 +262,6 @@ class LogoutView(generics.GenericAPIView):
 #             return Response({'error': 'Token is not valid, please request a new one'},
 #                             status=status.HTTP_401_UNAUTHORIZED)
 
-
-# class ElderCreate(generics.ListCreateAPIView):
-#     queryset = Elder.objects.all()
-#     serializer_class = ElderRegisterSerializer
-        
-
-# class ElderCreate(generics.GenericAPIView):
-#     serializer_class = ElderRegisterSerializer
-
-#     def post(self, request):
-#         user = request.data
-#         serializer = self.serializer_class(data=user)
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save()
-
-#         user_data = serializer.data
-#         return Response(user_data, status=status.HTTP_201_CREATED)
 
 class ElderLogin(generics.GenericAPIView):
     serializer_class = ElderLoginSerializer
