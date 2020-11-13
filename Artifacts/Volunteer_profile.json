@@ -1,0 +1,335 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Profile.",
+    "description": "APIs which lets us create, update, delete,fetch the profiles of a volunteer.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://dev.senior-sunshine.com/profile",
+      "description": "Development Server"
+    },
+    {
+      "url": "https://prod.senior-sunshine.com/profile",
+      "description": "Production Server"
+    }
+  ],
+  "paths": {
+    "/all": {
+      "get": {
+        "description": "Obtain all the volunteer profiles from the database.",
+        "parameters": [
+          {
+            "name": "bodyLimit",
+            "in": "query",
+            "description": "The number of profiles returned.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "maximum": 200,
+              "minimum": 100,
+              "type": "integer",
+              "example": 160
+            }
+          },
+          {
+            "name": "pageLimit",
+            "in": "query",
+            "description": "The pages to return volunteers profile.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "maximum": 20,
+              "minimum": 10,
+              "type": "integer",
+              "example": 13
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful pull of volunteers info.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/get_volunteer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/add": {
+      "post": {
+        "description": "Creates a new volunteer entry.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/post_volunteer"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a new volunteer."
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{id}": {
+      "get": {
+        "description": "Obtains profile of a specific volunteer.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the volunteer",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/get_volunteer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "volunteer not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Updates the volunteer profile with the specified ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the volunteer",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/post_volunteer"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the volunteer."
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "volunteer not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes the volunteer profile with the specified ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the volunteer",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Volunteer profile deleted."
+          },
+          "403": {
+            "description": "volunteer not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "common_volunteer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "username": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer"
+          },
+          "available_for_services": {
+            "type": "string",
+            "description": "List of the services for which volunteer is available."
+          },
+          "avalability_timings": {
+            "type": "string",
+            "description": "Availability timimgs for a week."
+          },
+          "experience_list": {
+            "type": "string",
+            "description": "List of all the previous services done by the volunteer."
+          }
+        }
+      },
+      "post_volunteer": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/common_volunteer"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "get_volunteer": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/common_volunteer"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "country": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "Response": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "responses": {
+      "400Error": {
+        "description": "Invalid request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Response"
+            }
+          }
+        }
+      },
+      "403Error": {
+        "description": "volunteer not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Response"
+            }
+          }
+        }
+      }
+    }
+  }
+}
