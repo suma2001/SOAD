@@ -6,12 +6,12 @@ from rest_framework.authtoken import views
 
 urlpatterns = [
     path('token/', views.obtain_auth_token, name='token'),
-    path('services/', ServicesAPIView.as_view()),
-    path('service/<int:id>/', ServicesDetailsView.as_view()),
-    path('profiles/', ProfileAPIView.as_view()),
-    path('profile/<int:id>/', ProfileDetailsView.as_view()),
-    path('elders/',ElderListView.as_view()),
-    path('elders/<int:id>/',ElderDetailView.as_view()),
+    path('services/', ServicesAPIView.as_view(),name='get_post_services'),
+    path('service/<int:id>/', ServicesDetailsView.as_view(),name="get_delete_update_service"),
+    path('profiles/', ProfileAPIView.as_view(),name = "get_post_profiles"),
+    path('profile/<int:id>/', ProfileDetailsView.as_view(),name = "get_delete_update_profile"),
+    path('elders/',ElderListView.as_view(),name = "get_post_elder_profiles"),
+    path('elders/<int:id>/',ElderDetailView.as_view(),name = "get_delete_update_elder_profile"),
     path('feedback/',FeedbackSubmitAPIView.as_view()),
     # path('volunteers/<int:id>/',GetVolunteers.as_view())
 ]

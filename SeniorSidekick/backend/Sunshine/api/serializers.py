@@ -43,7 +43,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class ElderProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Elder
-        fields = ['username', 'email', 'password', 'name', 'elder_age',
+        fields = ['username', 'email', 'name', 'elder_age',
                   'phone_no', 'address', 'location']
 
 
