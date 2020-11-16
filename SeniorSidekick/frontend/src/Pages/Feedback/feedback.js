@@ -50,6 +50,12 @@ const useStyles = theme => ({
     width: '100%', // Fix IE 11 issue.
     marginTop: theme.spacing(1),
   },
+  services: {
+    width: '100%',
+    padding: '17px',
+    marginTop: theme.spacing(1),
+    borderRadius: '4px',
+  },
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
@@ -64,7 +70,26 @@ class Feedback extends React.Component {
       time: '',
       rating: '',
       custom_feedback: '',
+      services: [],
+      validationError: '',
     }
+  }
+
+  componentDidMount() {
+    fetch("http://127.0.0.1:8000/api/services/")
+    .then((response) => {
+      return response.json();
+    })
+    .then(data => {
+      let servicesFromApi = data.map(service => {
+        return {value: service.name, display: service.name}
+      });
+      this.setState({
+        services: [{value: '', display: '(Select the service)'}].concat(servicesFromApi)
+      });
+    }).catch(error => {
+      console.log(error);
+    })
   }
 
   handleChange = (event) => {
@@ -92,6 +117,8 @@ class Feedback extends React.Component {
     const { volunteer_name, service_done, time, rating, custom_feedback } = this.state;
     const {classes} = this.props;
 
+    console.log(this.state.services)
+
     return (
       <Grid container component="main" className={classes.root}>
         <CssBaseline />
@@ -118,21 +145,16 @@ class Feedback extends React.Component {
                 id="volunteer_name"
                 autoComplete="volunteer_name"
               />
-              
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="service_done"
-                value={service_done}
-                onChange={this.handleChange}
-                label="Service"
-                name="service_done"
-                type="text"
-                autoComplete="service_done"
-                autoFocus
-              />
+              <select className={classes.services} value={service_done}
+                onChange={e => this.setState({service_done: e.target.value, validationError: e.target.value === "" ? "You must select a service" : ""})}>
+                {this.state.services.map((service) => 
+                <option key={service.value} value={service.value}>
+                  {service.display}
+                </option>)}
+              </select>
+              <div style={{color: 'red', marginTop: '5px'}}>
+                {this.state.validationError}
+              </div>
               <Grid container justify="space-between">
               <TextField
                 variant="outlined"
