@@ -23,6 +23,25 @@ class Address(models.Model):
     pincode = models.CharField(max_length=10)
 
 
+class Feedback(models.Model):
+    volunteer_name = models.CharField(max_length=50)
+    service_done = models.CharField(max_length=50)
+    time = models.DateTimeField()
+
+    class Rating(models.IntegerChoices):
+        POOR = 1
+        BAD = 2
+        AVERAGE = 3
+        GOOD = 4
+        EXCELLENT = 5
+
+    rating = models.IntegerField(choices=Rating.choices)
+    custom_feedback = models.TextField(blank=True)
+
+    def __str__(self):
+        return str(self.volunteer_name) + str(self.time)
+        
+
 class Experience(models.Model):
     experience_id = models.AutoField(primary_key=True, auto_created=True)
     date_of_service = models.DateTimeField(auto_now_add=True)

@@ -114,23 +114,26 @@ class Feedback extends React.Component {
                 value={volunteer_name}
                 onChange={this.handleChange}
                 label="Volunteer Name"
-                type="volunteer_name"
+                type="text"
                 id="volunteer_name"
                 autoComplete="volunteer_name"
               />
-              <Grid container justify="space-between">
+              
               <TextField
                 variant="outlined"
                 margin="normal"
                 required
+                fullWidth
                 id="service_done"
                 value={service_done}
                 onChange={this.handleChange}
                 label="Service"
                 name="service_done"
+                type="text"
                 autoComplete="service_done"
                 autoFocus
               />
+              <Grid container justify="space-between">
               <TextField
                 variant="outlined"
                 margin="normal"
@@ -138,8 +141,7 @@ class Feedback extends React.Component {
                 name="time"
                 value={time}
                 onChange={this.handleChange}
-                label="Time"
-                type="time"
+                type="datetime-local"
                 id="time"
                 autoComplete="time"
               />
@@ -152,6 +154,7 @@ class Feedback extends React.Component {
                 onChange={this.handleChange}
                 label="Rating"
                 name="rating"
+                type="number"
                 autoComplete="rating"
                 autoFocus
               />
@@ -164,7 +167,7 @@ class Feedback extends React.Component {
                 value={custom_feedback}
                 onChange={this.handleChange}
                 label="Feedback"
-                type="custom_feedback"
+                type="text"
                 id="custom_feedback"
                 autoComplete="custom_feedback"
               />
