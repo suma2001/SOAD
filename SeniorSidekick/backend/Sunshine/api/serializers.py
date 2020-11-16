@@ -45,3 +45,10 @@ class ElderProfileSerializer(serializers.ModelSerializer):
         model = Elder
         fields = ['username', 'email', 'password', 'name', 'elder_age',
                   'phone_no', 'address', 'location']
+
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    time = serializers.DateTimeField(format='%d-%m-%Y %H:%m')
+    class Meta:
+        model = Feedback
+        fields = ['volunteer_name', 'service_done', 'time', 'rating', 'custom_feedback']

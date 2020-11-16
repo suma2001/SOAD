@@ -12,6 +12,7 @@ urlpatterns = [
     path('profile/<int:id>/', ProfileDetailsView.as_view()),
     path('elders/',ElderListView.as_view()),
     path('elders/<int:id>/',ElderDetailView.as_view()),
+    path('feedback/',FeedbackSubmitAPIView.as_view()),
     # path('volunteers/<int:id>/',GetVolunteers.as_view())
 ]
 

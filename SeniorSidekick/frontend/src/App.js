@@ -28,21 +28,21 @@ function App() {
         <Route exact path="/register">
           <Register />
         </Route>
-        {/*<Route exact path="/request-service">
+        <Route exact path="/request-service">
           <RequestService />
         </Route>
         <Route exact path="/volunteer-list">
           <VolunteerList />
         </Route>
-        <Route exact path="/profile"> {/*make this as /profile:id later for each volunteer*/}
+        {/* <Route exact path="/profile">*/} {/*make this as /profile:id later for each volunteer*/}
           {/* <Profile />
         </Route>
         <Route exact path="/contact-us">
           <ContactUs />
-        </Route>
+          </Route> */}
         <Route exact path="/feedback">
           <Feedback />
-        </Route> */}
+        </Route>
         <Footer />
       </div>
       </ThemeProvider>

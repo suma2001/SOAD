@@ -6,6 +6,7 @@ from django.contrib.gis.admin import OSMGeoAdmin
 admin.site.register(Service)
 admin.site.register(Address)
 admin.site.register(Experience)
+admin.site.register(Feedback)
 admin.site.register(Elder, OSMGeoAdmin)
 admin.site.register(Volunteer, OSMGeoAdmin)
 
