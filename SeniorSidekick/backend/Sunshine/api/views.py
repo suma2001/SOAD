@@ -35,10 +35,12 @@ class ServicesDetailsView(APIView):
         try:
             return Service.objects.get(pk=id)
         except Service.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return None
 
     def get(self, request, id):
         service = self.get_object(id)
+        if service == None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = ServiceSerializer(service)
         return Response(serializer.data)
 
@@ -53,6 +55,8 @@ class ServicesDetailsView(APIView):
 
     def delete(self, request, id):
         article = self.get_object(id)
+        if article==None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         article.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -97,11 +101,13 @@ class ProfileDetailsView(APIView):
         try:
             return Volunteer.objects.get(pk=id)
         except Volunteer.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return None
 
     def get(self, request, id):
         # Login
         profile = self.get_object(id)
+        if profile == None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = ProfileSerializer(profile)
         return Response(serializer.data)
 
@@ -116,6 +122,8 @@ class ProfileDetailsView(APIView):
 
     def delete(self, request, id):
         profile = self.get_object(id)
+        if profile == None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         profile.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -137,12 +145,14 @@ class ElderListView(APIView):
 class ElderDetailView(APIView):
     def get_object(self, id):
         try:
-            return Elder.objects.get(pk=id)
+            return Elder.objects.get(id=id)
         except Elder.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return None
 
     def get(self, request, id, format=None):
         elder = self.get_object(id)
+        if elder == None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = ElderProfileSerializer(elder)
         return Response(serializer.data)
 
@@ -156,6 +166,8 @@ class ElderDetailView(APIView):
 
     def delete(self, request, id, format=None):
         elder = self.get_object(id)
+        if elder == None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         elder.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -173,6 +185,7 @@ class ElderDetailView(APIView):
 
 #         serializer = ProfileSerializer(volunteers, many=True)
 #         return Response(serializer.data)
+
 
 
 class FeedbackSubmitAPIView(APIView):
