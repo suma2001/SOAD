@@ -6,8 +6,10 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase,APIClient
 
-from .models import Address, Experience, Service, Volunteer,Elder
-from .serializers import ProfileSerializer, ServiceSerializer,ElderProfileSerializer
+from .models import Address, Experience, Service, Volunteer,Elder, Feedback
+from .serializers import ProfileSerializer, ServiceSerializer,ElderProfileSerializer,FeedbackSerializer
+from django.utils import timezone
+import pytz
 
 class Models_TestCase(TestCase):
 
@@ -59,6 +61,13 @@ class Models_TestCase(TestCase):
         #Elder
         self.elder = Elder(username = self.username,email = self.email,name = self.name,elder_age = self.age,
                                 phone_no=self.phone_no,address = self.address,location=self.location)
+
+        #Feedback
+        self.time = timezone.now()
+        self.rating = 3
+        self.custom_feedback = "He is very polite."
+        self.feedback = Feedback(volunteer_name = self.name, service_done = self.service.name,time=self.time,
+                                rating = self.rating,custom_feedback = self.custom_feedback)
         
 
     def test_model_can_create_an_address(self):
@@ -83,6 +92,12 @@ class Models_TestCase(TestCase):
         old_count = Elder.objects.count()
         self.elder.save()
         new_count = Elder.objects.count()
+        self.assertEqual(old_count+1,new_count)
+    
+    def test_model_can_create_a_feedback(self):
+        old_count = Feedback.objects.count()
+        self.feedback.save()
+        new_count = Feedback.objects.count()
         self.assertEqual(old_count+1,new_count)
         
 
@@ -273,8 +288,6 @@ class Payload():
     def payload_with_no_location(self):
         self.location = ""
        
-
-
 class GetAllProfilesTest(TestCase):
     
     def test_profile_get_all_api(self):
@@ -715,5 +728,83 @@ class DeleteSingle_ElderProfile_Test(TestCase):
             reverse('get_delete_update_elder_profile', kwargs={'id': 10000}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+#Feedback
+
+class Feedback_Payload():
+
+    def __init__(self):
+
+        instance = CreateProfile()
+
+        self.volunteer_name = instance.volunteer.username
+        self.service_done = instance.service.name
+        self.time = str(timezone.now())
+        self.rating = 4
+        self.custom_feedback = "He is down to earth"
+        
+    def feedback_payload_with_no_volunteer_name(self):
+        self.volunteer_name=""
+    
+    def feedback_payload_with_no_service_name(self):
+        self.service_done = ""
+
+    def feedback_payload_with_invalid_rating(self):
+        self.rating = 10
+
+class GetAllFeedbacksTest(TestCase):
+    
+    def test_feedback_get_all_api(self):
+        response = self.client.get(
+            reverse('get_post_feedback'))
+        # import pdb
+        # pdb.set_trace()
+        feedbacks = Feedback.objects.all()
+        serializer = FeedbackSerializer(feedbacks,many=True)
+        
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
+        self.assertEqual(response.data,serializer.data)
+
+class CreateNewFeedbackTest(TestCase):
+
+    def setUp(self):
+        self.instance = Feedback_Payload()
+
+    def test_create_valid_feedback(self):
+        response = self.client.post(
+            reverse('get_post_feedback'),
+            data=json.dumps(self.instance.__dict__),
+            content_type='application/json'
+        )
+        # import pdb
+        # pdb.set_trace()
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_create_invalid_feedback_with_no_volunteer_name(self):
+        invalid_payload = self.instance.feedback_payload_with_no_volunteer_name()
+        response = self.client.post(
+            reverse('get_post_feedback'),
+            data=json.dumps(invalid_payload),
+            content_type='application/json'
+        )
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_create_invalid_feedback_with_no_service_name(self):
+        invalid_payload = self.instance.feedback_payload_with_no_service_name()
+        response = self.client.post(
+            reverse('get_post_feedback'),
+            data=json.dumps(invalid_payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_create_invalid_feedback_with_invalid_rating(self):
+        invalid_payload = self.instance.feedback_payload_with_invalid_rating()
+        response = self.client.post(
+            reverse('get_post_feedback'),
+            data=json.dumps(invalid_payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 

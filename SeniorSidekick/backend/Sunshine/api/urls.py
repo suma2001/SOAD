@@ -12,7 +12,7 @@ urlpatterns = [
     path('profile/<int:id>/', ProfileDetailsView.as_view(),name = "get_delete_update_profile"),
     path('elders/',ElderListView.as_view(),name = "get_post_elder_profiles"),
     path('elders/<int:id>/',ElderDetailView.as_view(),name = "get_delete_update_elder_profile"),
-    path('feedback/',FeedbackSubmitAPIView.as_view()),
+    path('feedback/',FeedbackSubmitAPIView.as_view(),name="get_post_feedback"),
     # path('volunteers/<int:id>/',GetVolunteers.as_view())
 ]
 
