@@ -35,6 +35,7 @@ class Models_TestCase(TestCase):
         self.address_old_count = Address.objects.count()
 
         #Experience
+    
         self.service.save()
         self.type_of_service = self.service
         self.experience = Experience(type_of_service = self.type_of_service)
@@ -53,14 +54,16 @@ class Models_TestCase(TestCase):
         self.availability  = True
         self.services_available = self.service
         self.location = "SRID=4326;POINT (32.43164062048556 -3.337956638610946)"
+        self.password = "hi123@456"
         self.experience = [self.experience.id]
         self.profile = Volunteer(username = self.username,email = self.email,name = self.name,volunteer_age = self.age,
                                 phone_no=self.phone_no,address = self.address,biography = self.biography,
-                                availability = self.availability,services_available=self.services_available,experience=self.experience,location=self.location)
+                                availability = self.availability,services_available=self.services_available,experience=self.experience,location=self.location,
+                                password = self.password)
 
         #Elder
         self.elder = Elder(username = self.username,email = self.email,name = self.name,elder_age = self.age,
-                                phone_no=self.phone_no,address = self.address,location=self.location)
+                                phone_no=self.phone_no,address = self.address,location=self.location,password = self.password)
 
         #Feedback
         self.time = timezone.now()
@@ -230,7 +233,7 @@ class CreateProfile():
 
         self.volunteer = Volunteer.objects.create(username = "bugsbunny", email ="testcase@gmail.com" ,name= "test_volunteer" ,volunteer_age = 23,
                                 phone_no="9848000000",address = self.address,biography = "I am a test case",
-                                availability = True,services_available=self.service, experience=[self.experience.id],location=self.location)
+                                availability = True,services_available=self.service, experience=[self.experience.id],location=self.location,password ="hi123@456" )
 
 class Payload():
 
@@ -265,6 +268,7 @@ class Payload():
         self.phone_no = "9848000007"
         self.biography = "I am a test case"
         self.availability = True
+        self.password = "hi123@456"
         self.services_available = groceries.pk
         self.location = "SRID=4326;POINT (32.43164062048556 -3.337956638610946)"
         self.experience = [exp.id]
@@ -496,7 +500,7 @@ class Create_Elder_Profile():
                            city = "Hyderabad", state = "Telangana", country = "India",pincode = "500094")
 
         self.elder  = Elder.objects.create(username = "bugsbunny", email ="testcase@gmail.com" ,name= "test_volunteer" ,elder_age = 72,
-                                phone_no="9848131313",address = self.address,location=self.location)
+                                phone_no="9848131313",address = self.address,location=self.location,password = "hi123@456")
 
 class Elder_Payload():
 
@@ -510,6 +514,7 @@ class Elder_Payload():
         self.email = "bugsbunny@gmail.com"
         self.name = "Bugs Bunny"
         self.address = addr.pk
+        self.password = "hi123@456"
         self.elder_age = 72
         self.phone_no = "9848000007"
         self.location = "SRID=4326;POINT (32.43164062048556 -3.337956638610946)"

@@ -14,7 +14,8 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Volunteer
         fields = ['username', 'email', 'name','volunteer_age',
-                  'phone_no', 'address', 'biography', 'availability', 'services_available', 'experience', 'location']
+                  'phone_no', 'address', 'biography', 'availability', 'services_available', 'password','experience', 'location']
+        write_only = ['password']
 
     # def update(self, instance, validated_data):
     #     # First, update the User
@@ -43,8 +44,9 @@ class ProfileSerializer(serializers.ModelSerializer):
 class ElderProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Elder
-        fields = ['username', 'email', 'name', 'elder_age',
+        fields = ['username', 'email', 'password','name', 'elder_age',
                   'phone_no', 'address', 'location']
+        write_only = ['password']
 
 
 class FeedbackSerializer(serializers.ModelSerializer):
