@@ -6,6 +6,16 @@ matrix:
         - cd ./SeniorSidekick/backend/Sunshine/
       install:
         - pip install -r ./SeniorSidekick/backend/Sunshine/requirements.txt
+      addons:
+        postgresql: "12"
+        apt:
+          packages:
+          - postgresql-12
+          - postgresql-client-12
+      env:
+        global:
+        - PGUSER=postgres
+        - PGPORT=5432
       script:
         - python manage.py test
         
