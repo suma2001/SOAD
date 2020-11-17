@@ -6,6 +6,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import { red } from "@material-ui/core/colors";
+import Grid from '@material-ui/core/Grid';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   typography: {
       marginLeft: "43%",
       fontSize: "26px",
-  }
+  },
 }));
 
 export default function VolunteerList() {
@@ -34,6 +35,8 @@ export default function VolunteerList() {
   return (
     <div className={classes.root}>
     <Typography className={classes.typography}>List of Volunteers</Typography>
+    <Grid container justify="space-evenly">
+    <Grid sm={5}>
     <Card className={classes.card}>
       <CardHeader classes={{subheader: classes.subheader,}}
         avatar={
@@ -41,15 +44,17 @@ export default function VolunteerList() {
             P
           </Avatar>
         }
-        title="Prahitha Movva"
-        subheader="Visakhapatnam, Andhra Pradesh"
+        title="FirstName LastName"
+        subheader="City, State"
       />
       <CardContent>
         <Typography variant="body2" color="secondary" component="p">
-          Biography comes here
+        Alyssa Barnes is a 23-year-old health centre receptionist who enjoys cycling, swimming and reading. She is smart and generous
         </Typography>
       </CardContent>
     </Card>
+    </Grid>
+    <Grid sm={5}>
     <Card className={classes.card}>
       <CardHeader classes={{subheader: classes.subheader,}}
         avatar={
@@ -58,14 +63,16 @@ export default function VolunteerList() {
           </Avatar>
         }
         title="Random Random"
-        subheader="Visakhapatnam, Andhra Pradesh"
+        subheader="City, State"
       />
       <CardContent>
         <Typography variant="body2" color="secondary" component="p">
-          Biography comes here
+        Katherine Rogers is a 27-year-old chef at chain restaurant who enjoys walking, appearing in the background on TV and eating out. She is energetic and creative
         </Typography>
       </CardContent>
     </Card>
+    </Grid>
+    </Grid>
     </div>
   );
 }

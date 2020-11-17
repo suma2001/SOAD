@@ -143,7 +143,7 @@ export default function SignInSide() {
             </Button>
             <Grid container>
               <Grid container direction="row" justify="flex-end" alignItems="flex-end">
-                <Link href="#" variant="body2">
+                <Link href="/login" variant="body2">
                   {"Already have an account? Sign In"}
                 </Link>
               </Grid>

@@ -31,28 +31,28 @@ export default function Benefits() {
         <Grid container justify="space-around" spacing={3}>
           <Grid container direction="column" justify="center" alignItems="center" xs={12} md={3} style={{margin: "2%"}}>
               <ErrorIcon fontSize="large" color="primary"/>
-              <Typography variant="h3">
+              <Typography data-testid="goal" variant="h3">
                   Goal
               </Typography>
-              <Typography variant="body2" align="center" style={{fontWeight: "500"}}>
+              <Typography data-testid="goal_text" variant="body2" align="center" style={{fontWeight: "500"}}>
                   Connect elderly with young adults. Should add some more content in this part
               </Typography>
           </Grid>
           <Grid xs={12} md={3} container direction="column" justify="center" alignItems="center" style={{margin: "2%"}}>
               <EmojiEmotionsIcon fontSize="large" color="primary"/>
-              <Typography variant="h3">
+              <Typography data-testid="interactive" variant="h3">
                   Interactive
               </Typography>
-              <Typography variant="body2" align="center" style={{fontWeight: "500"}}>
+              <Typography data-testid="interactive_text" variant="body2" align="center" style={{fontWeight: "500"}}>
                   User-friendly UI to make it accessible and easy for the seniors to interact with the website
               </Typography>
           </Grid>
           <Grid xs={12} md={3} container direction="column" justify="center" alignItems="center" style={{margin: "2%"}}>
               <SignalCellularAltIcon fontSize="large" color="primary"/>
-              <Typography variant="h3">
+              <Typography data-testid="connectivity" variant="h3">
                   Connectivity
               </Typography>
-              <Typography variant="body2" align="center" style={{fontWeight: "500"}}>
+              <Typography data-testid="connectivity_text" variant="body2" align="center" style={{fontWeight: "500"}}>
                  Help foster the connectivity and sharing of meaningful experiences
                 </Typography>
           </Grid>
@@ -62,14 +62,14 @@ export default function Benefits() {
     <Container>
     <Paper style={{backgroundColor: "#63326E"}} variant="outlined" elevation={2}>
     <Grid container direction="column" justify="center" alignItems="center" xs={12} style={{margin: "5% 0"}}>
-        <Typography variant="body2" style={{fontSize: "20px", fontWeight: "500", marginBottom: "2%"}}>
+        <Typography data-testid="solution" variant="body2" style={{fontSize: "20px", fontWeight: "500", marginBottom: "2%"}}>
             SOLUTION
         </Typography>
-        <Typography variant="h3" style={{color: "#EFBC9B"}}>
+        <Typography data-testid="potential" variant="h3" style={{color: "#EFBC9B"}}>
             Unlock the Potential
         </Typography>
         <Grid md={4} xs={12} >
-        <Typography variant="body2"align="center" style={{fontWeight: "500"}}>
+        <Typography data-testid="solution_text" variant="body2"align="center" style={{fontWeight: "500"}}>
             A website that connects seniors with young volunteers to 
             help them with their daily tasks, activities and also have 
             a buddy to talk to when they want company

@@ -38,14 +38,15 @@ export default function Header() {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ml-auto">
                     <Nav.Link href="/request-service" style={{color: "#EFBC9B"}}>Get Help</Nav.Link>
-                    <Nav.Link href="/profile" style={{color: "#EFBC9B"}}>Offer Help</Nav.Link>
+                    <Nav.Link href="/volunteer-list" style={{color: "#EFBC9B"}}>Volunteers</Nav.Link>
+                    <Nav.Link href="/feedback" style={{color: "#EFBC9B"}}>Feedback</Nav.Link>
                     <Nav.Link>
                         <Link to="contact-us" smooth duration={300} style={{color: "#EFBC9B"}}>About Us</Link>
                     </Nav.Link>
                     <Nav.Link>
                         <Link to="contact-us" smooth duration={500} style={{color: "#EFBC9B"}}>Contact Us</Link>
                     </Nav.Link>
-                    <Nav.Link href="/profile" style={{color: "#EFBC9B"}}>Login</Nav.Link>
+                    <Nav.Link href="/login" style={{color: "#EFBC9B"}}>Login</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
                 </Navbar>
