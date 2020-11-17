@@ -1,0 +1,19 @@
+matrix:
+  include:
+    - language: python
+      python: 3.8
+      before_script:
+        - cd ./SeniorSidekick/backend/Sunshine/
+      install:
+        - pip install -r ./SeniorSidekick/backend/Sunshine/requirements.txt
+      script:
+        - python manage.py test
+        
+    - language: node_js
+      node_js: "10"
+      before_script:
+        - cd ./SeniorSidekick/frontend/
+      install:
+        - npm install
+      script:
+        - npm test
