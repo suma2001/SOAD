@@ -18,7 +18,7 @@ function App() {
     <Router>
       <ThemeProvider theme={theme}>
       <div className="App">
-        <Header />
+        <Header/>
         <Route exact path="/">
           <Home />
         </Route>

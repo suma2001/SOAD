@@ -126,7 +126,10 @@ class LogoutAPI(APIView):
         # simply delete the token to force a login
         print(AuthToken.objects.all())
         print("Logged in user is: ", request.user)
-        AuthToken.objects.filter(user=request.user).delete()
+        try:
+            AuthToken.objects.filter(user=request.user).delete()
+        except:
+            print("Error")
         
         logout(request)
         # request.user.token.delete()
