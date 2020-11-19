@@ -1,6 +1,3 @@
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
-from rest_framework.parsers import JSONParser
 from .serializers import *
 from .models import *
 from rest_framework.response import Response
@@ -8,15 +5,38 @@ from rest_framework import status
 from rest_framework.views import APIView
 from django.contrib.gis.measure import D
 from django.contrib.gis.db.models.functions import Distance
-from rest_framework.authtoken.models import Token
-from rest_framework.authentication import TokenAuthentication
-from django.core.mail import EmailMessage
-from django.contrib.auth.models import User
-from rest_framework.authtoken.models import Token
+from django.contrib.auth import login
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from knox.views import LoginView as KnoxLoginView
+from rest_framework import generics, permissions
+from knox.models import AuthToken
+from django.views.decorators.debug import sensitive_post_parameters
+from django.contrib.auth import logout, authenticate
+from rest_framework.decorators import api_view
+
+User = get_user_model()
+
+
+class UsersAPIView(APIView):
+
+    def get(self, request):
+        users = User.objects.all()
+        serializer = CustomUserSerializer(users, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = CustomUserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ServicesAPIView(APIView):
 
     def get(self, request):
+        print(request.user)
+        # current_user(request)
         services = Service.objects.all()
         serializer = ServiceSerializer(services, many=True)
         return Response(serializer.data)
@@ -28,19 +48,16 @@ class ServicesAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 class ServicesDetailsView(APIView):
 
     def get_object(self, id):
         try:
             return Service.objects.get(pk=id)
         except Service.DoesNotExist:
-            return None
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
     def get(self, request, id):
         service = self.get_object(id)
-        if service == None:
-            return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = ServiceSerializer(service)
         return Response(serializer.data)
 
@@ -55,65 +72,129 @@ class ServicesDetailsView(APIView):
 
     def delete(self, request, id):
         article = self.get_object(id)
-        if article==None:
-            return Response(status=status.HTTP_404_NOT_FOUND)
         article.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+@api_view(['GET'])
+def current_user(request):
+    user = request.user
+    print(user)
+    return Response({
+        'username': user.username
+    })
 
-class ProfileAPIView(APIView):
+# Register API
+class RegisterAPI(generics.GenericAPIView):
+    serializer_class = RegisterTestVolunteerSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        user1 = serializer.validated_data.pop('user')
+        username = user1['username']
+        # print("User is:", user['username'])
+        user = User.objects.get(username=username)
+        return Response({
+            "user": UserSerializer(user, context=self.get_serializer_context()).data,
+            "volunteer_age": serializer.validated_data['volunteer_age'],
+            "phone_no": serializer.validated_data['phone_no'],
+            "location": serializer.validated_data['location'],
+            "availability": serializer.validated_data['availability'],
+            "token": AuthToken.objects.create(user)[1]
+            })
+
+
+# Login API
+class LoginAPI(KnoxLoginView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, format=None):
+        serializer = AuthTokenSerializer(data=request.data)
+        
+        serializer.is_valid(raise_exception=True)
+        username = serializer.validated_data['username']
+        password = serializer.validated_data['password']
+        user = authenticate(username=username, password=password)
+        print(user.id)
+        login(request, user)
+        print(request.user)
+        return super(LoginAPI, self).post(request, format=None)
+
+class LogoutAPI(APIView):
     def get(self, request, format=None):
-        profiles = Volunteer.objects.all()
-        serializer = ProfileSerializer(profiles, many=True)
-        print(serializer.data)
+        # simply delete the token to force a login
+        print(AuthToken.objects.all())
+        print("Logged in user is: ", request.user)
+        AuthToken.objects.filter(user=request.user).delete()
+        
+        logout(request)
+        # request.user.token.delete()
+        return Response(status=status.HTTP_200_OK)
+
+# Elder Register API
+class RegisterElderAPI(generics.GenericAPIView):
+    serializer_class = RegisterElderSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        user1 = serializer.validated_data.pop('user')
+        username = user1['username']
+        # print("User is:", user['username'])
+        user = User.objects.get(username=username)
+        return Response({
+            "user": UserSerializer(user, context=self.get_serializer_context()).data,
+            "elder_age": serializer.validated_data['elder_age'],
+            "phone_no": serializer.validated_data['phone_no'],
+            "location": serializer.validated_data['location'],
+            "token": AuthToken.objects.create(user)[1]
+            })
+
+# Login API
+class LoginElderAPI(KnoxLoginView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, format=None):
+        serializer = AuthTokenSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        login(request, user)
+        return super(LoginElderAPI, self).post(request, format=None)
+
+
+class TestVolunteerView(APIView):
+    def get(self, request, format=None):
+        T_volunteers = TestVolunteer.objects.all()
+        serializer = RegisterTestVolunteerSerializer(T_volunteers, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        # Register
-        serializer = ProfileSerializer(data=request.data)
+        serializer = RegisterTestVolunteerSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            user_data = serializer.data
-            user = Volunteer.objects.get(email=user_data['email'])
-            # user.id = user.profile_id
-            # token = Token.objects.create(volunteer=user)
-            # print(token, token.key)
-            # uidb64 = urlsafe_base64_encode(smart_bytes(token.profile_id))
-            # current_site = get_current_site(request).domain
-            # relative_link = reverse('email-verify', kwargs={'uidb64': uidb64})
-            # absurl = 'http://' + current_site + relative_link + "?token=" + str(token)
-            # email_body = 'Hi! Welcome to Senior Sunshine.\nClick on the below link to verify your email\n' + absurl
-            # message = {'email_body': email_body, 'email_subject': 'Email Verification for Senior Sunshine', 'to_email': (user.email, )}
-            # email = EmailMessage(subject=message['email_subject'], body=message['email_body'], to=message['to_email'])
-            # email.send()
-            # user_data['token'] = token.key
-            # user_data['profile_id'] = user.id
-            # user_data['is_verified'] = user.is_verified
-            # return Response(user_data, status=status.HTTP_201_CREATED)
-
+            # user = serializer.validated_data['user']
+            # login(request, user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class ProfileDetailsView(APIView):
-
+class TestVolunteerDetailView(APIView):
     def get_object(self, id):
         try:
-            return Volunteer.objects.get(pk=id)
-        except Volunteer.DoesNotExist:
-            return None
+            return TestVolunteer.objects.get(pk=id)
+        except Service.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
     def get(self, request, id):
-        # Login
-        profile = self.get_object(id)
-        if profile == None:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = ProfileSerializer(profile)
+        service = self.get_object(id)
+        serializer = RegisterTestVolunteerSerializer(service)
+        print(len(serializer.data))
         return Response(serializer.data)
 
     def put(self, request, id):
-        profile = self.get_object(id)
-        serializer = ProfileSerializer(profile, data=request.data)
+        service = self.get_object(id)
+        serializer = RegisterTestVolunteerSerializer(service, data=request.data)
 
         if serializer.is_valid():
             serializer.save()
@@ -121,72 +202,63 @@ class ProfileDetailsView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id):
-        profile = self.get_object(id)
-        if profile == None:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        profile.delete()
+        article = self.get_object(id)
+        article.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 class ElderListView(APIView):
     def get(self, request, format=None):
-        Elders = Elder.objects.all()
-        serializer = ElderProfileSerializer(Elders, many=True)
+        elders = Elder.objects.all()
+        serializer = RegisterElderSerializer(elders, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        serializer = ElderProfileSerializer(data=request.data)
+        serializer = RegisterElderSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 class ElderDetailView(APIView):
     def get_object(self, id):
         try:
-            return Elder.objects.get(id=id)
-        except Elder.DoesNotExist:
-            return None
-
-    def get(self, request, id, format=None):
-        elder = self.get_object(id)
-        if elder == None:
+            return Elder.objects.get(pk=id)
+        except Service.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = ElderProfileSerializer(elder)
+
+    def get(self, request, id):
+        service = self.get_object(id)
+        serializer = RegisterElderSerializer(service)
+        print(len(serializer.data))
         return Response(serializer.data)
 
-    def put(self, request, id, format=None):
-        elder = self.get_object(id)
-        serializer = ElderProfileSerializer(elder, data=request.data)
+    def put(self, request, id):
+        service = self.get_object(id)
+        serializer = RegisterElderSerializer(service, data=request.data)
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, id, format=None):
-        elder = self.get_object(id)
-        if elder == None:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        elder.delete()
+    def delete(self, request, id):
+        article = self.get_object(id)
+        article.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class GetVolunteers(APIView):
+    def get(self,request,id,format=None):
+        try:
+            elder = Elder.objects.get(pk=id)
+        except Elder.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-# class GetVolunteers(APIView):
-#     def get(self,request,id,format=None):
-#         try:
-#             elder = Elder.objects.get(pk=id)
-#         except Elder.DoesNotExist:
-#             return Response(status=status.HTTP_404_NOT_FOUND)
+        current_location = elder.location
+        volunteers = TestVolunteer.objects.filter(location__dwithin=(current_location, 1), availability=True
+                                              ).annotate(distance=Distance('location', current_location))
 
-#         current_location = elder.location
-#         volunteers = Volunteer.objects.filter(location__dwithin=(current_location, 1), availability=True
-#                                               ).annotate(distance=Distance('location', current_location))
-
-#         serializer = ProfileSerializer(volunteers, many=True)
-#         return Response(serializer.data)
-
-
+        serializer = RegisterTestVolunteerSerializer(volunteers, many=True)
+        return Response(serializer.data)
 
 class FeedbackSubmitAPIView(APIView):
     def get(self, request, format=None):
@@ -195,7 +267,9 @@ class FeedbackSubmitAPIView(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
+        print("HI")
         serializer = FeedbackSerializer(data=request.data)
+        print(serializer)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
