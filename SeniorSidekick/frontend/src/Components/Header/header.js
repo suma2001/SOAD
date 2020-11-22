@@ -76,8 +76,8 @@ class Header extends React.Component {
                         <Nav.Link>
                             <Link to="contact-us" smooth duration={500} style={{color: "#EFBC9B"}}>Contact Us</Link>
                         </Nav.Link>
-
-                        {isloggedin ? <FacebookLoginButton onClick={this.handleLogoutClick} /> : <GoogleLoginButton onClick={this.handleLoginClick} />}
+                        <Nav.Link href="/login" style={{color: "#EFBC9B"}}>Login</Nav.Link>
+                        {/* {isloggedin ? <FacebookLoginButton onClick={this.handleLogoutClick} /> : <GoogleLoginButton onClick={this.handleLoginClick} />} */}
                         </Nav>
                     </Navbar.Collapse>
                     </Navbar>

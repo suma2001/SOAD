@@ -33,6 +33,7 @@ class UsersAPIView(APIView):
 
 
 class ServicesAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated, ]
 
     def get(self, request):
         print(request.user)
@@ -49,7 +50,7 @@ class ServicesAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ServicesDetailsView(APIView):
-
+    permission_classes = [permissions.IsAuthenticated, ]
     def get_object(self, id):
         try:
             return Service.objects.get(pk=id)
@@ -88,12 +89,13 @@ class RegisterAPI(generics.GenericAPIView):
     serializer_class = RegisterTestVolunteerSerializer
 
     def post(self, request, *args, **kwargs):
+        print("I am in")
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         user1 = serializer.validated_data.pop('user')
         username = user1['username']
-        # print("User is:", user['username'])
+        print("User is:", user['username'])
         user = User.objects.get(username=username)
         return Response({
             "user": UserSerializer(user, context=self.get_serializer_context()).data,
@@ -110,8 +112,9 @@ class LoginAPI(KnoxLoginView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, format=None):
+        print("Login")
         serializer = AuthTokenSerializer(data=request.data)
-        
+        print(serializer)
         serializer.is_valid(raise_exception=True)
         username = serializer.validated_data['username']
         password = serializer.validated_data['password']
@@ -250,20 +253,25 @@ class ElderDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class GetVolunteers(APIView):
+    # permission_classes = [permissions.IsAuthenticated, ]
+
     def get(self,request,id,format=None):
         try:
             elder = Elder.objects.get(pk=id)
+            print(elder)
         except Elder.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         current_location = elder.location
-        volunteers = TestVolunteer.objects.filter(location__dwithin=(current_location, 1), availability=True
+        volunteers = TestVolunteer.objects.filter(location__dwithin=(current_location, 1.6), availability=True
                                               ).annotate(distance=Distance('location', current_location))
 
         serializer = RegisterTestVolunteerSerializer(volunteers, many=True)
         return Response(serializer.data)
 
 class FeedbackSubmitAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated, ]
+
     def get(self, request, format=None):
         feedback = Feedback.objects.all()
         serializer = FeedbackSerializer(feedback, many=True)
