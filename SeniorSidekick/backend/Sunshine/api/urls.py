@@ -13,17 +13,15 @@ urlpatterns = [
     path('elderlogin/', LoginElderAPI.as_view(), name='elderlogin'),
     path('currentuser/', current_user, name='current_user'),
     path('token/', views.obtain_auth_token, name='token'),
-    path('services/', ServicesAPIView.as_view()),
-    path('service/<int:id>/', ServicesDetailsView.as_view()),
+    path('services/', ServicesAPIView.as_view(), name ='get_post_services'),
+    path('service/<int:id>/', ServicesDetailsView.as_view(), name='get_delete_update_service'),
     # path('profiles/', ProfileAPIView.as_view()),
     # path('profile/<int:id>/', ProfileDetailsView.as_view()),
-    path('elders/',ElderListView.as_view()),
-    path('elder/<int:id>/',ElderDetailView.as_view()),
-    path('feedback/',FeedbackSubmitAPIView.as_view()),
-    path('test_volunteers/',TestVolunteerView.as_view()),
-    path('test_volunteer/<int:id>/',TestVolunteerDetailView.as_view()),
+    path('elders/',ElderListView.as_view(),name ='get_post_elder_profiles'),
+    path('elder/<int:id>/',ElderDetailView.as_view(),name ='get_delete_update_elder_profile'),
+    path('feedback/',FeedbackSubmitAPIView.as_view(),name ='get_post_feedback'),
+    path('test_volunteers/',TestVolunteerView.as_view(), name ='get_post_profiles'),
+    path('test_volunteer/<int:id>/',TestVolunteerDetailView.as_view(),name='get_delete_update_profile'),
     path('custom_users/',UsersAPIView.as_view()),
     path('volunteers/<int:id>/',GetVolunteers.as_view())
 ]
-
-urlpatterns = format_suffix_patterns(urlpatterns)

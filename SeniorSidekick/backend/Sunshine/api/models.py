@@ -8,9 +8,6 @@ from .managers import CustomUserManager
 from django.contrib.auth import get_user_model
 
 
-# Create your models here.
-
-
 class CustomUser(AbstractUser):
     CHOICES = (
         (1, 'Elder'),
@@ -63,7 +60,7 @@ class TestVolunteer(models.Model):
 
 
 class Elder(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="elder")
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name="elder", null=True)
     elder_age = models.IntegerField(validators=[MinValueValidator(20), MaxValueValidator(110)])
     phone_no = models.CharField(max_length=10)
     location = models.PointField(null=True)

@@ -14,6 +14,7 @@ from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.auth import logout, authenticate
 from rest_framework.decorators import api_view
 
+
 User = get_user_model()
 
 
@@ -33,7 +34,6 @@ class UsersAPIView(APIView):
 
 
 class ServicesAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated, ]
 
     def get(self, request):
         print(request.user)
@@ -50,15 +50,17 @@ class ServicesAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ServicesDetailsView(APIView):
-    permission_classes = [permissions.IsAuthenticated, ]
+
     def get_object(self, id):
         try:
             return Service.objects.get(pk=id)
         except Service.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return None
 
     def get(self, request, id):
         service = self.get_object(id)
+        if service == None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = ServiceSerializer(service)
         return Response(serializer.data)
 
@@ -73,6 +75,8 @@ class ServicesDetailsView(APIView):
 
     def delete(self, request, id):
         article = self.get_object(id)
+        if article == None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         article.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -89,13 +93,12 @@ class RegisterAPI(generics.GenericAPIView):
     serializer_class = RegisterTestVolunteerSerializer
 
     def post(self, request, *args, **kwargs):
-        print("I am in")
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         user1 = serializer.validated_data.pop('user')
         username = user1['username']
-        print("User is:", user['username'])
+        # print("User is:", user['username'])
         user = User.objects.get(username=username)
         return Response({
             "user": UserSerializer(user, context=self.get_serializer_context()).data,
@@ -112,9 +115,8 @@ class LoginAPI(KnoxLoginView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, format=None):
-        print("Login")
         serializer = AuthTokenSerializer(data=request.data)
-        print(serializer)
+        
         serializer.is_valid(raise_exception=True)
         username = serializer.validated_data['username']
         password = serializer.validated_data['password']
@@ -188,12 +190,14 @@ class TestVolunteerView(APIView):
 class TestVolunteerDetailView(APIView):
     def get_object(self, id):
         try:
-            return TestVolunteer.objects.get(pk=id)
-        except Service.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return TestVolunteer.objects.get(id=id)
+        except TestVolunteer.DoesNotExist:
+            return None
 
     def get(self, request, id):
         service = self.get_object(id)
+        if service == None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = RegisterTestVolunteerSerializer(service)
         print(len(serializer.data))
         return Response(serializer.data)
@@ -209,6 +213,8 @@ class TestVolunteerDetailView(APIView):
 
     def delete(self, request, id):
         article = self.get_object(id)
+        if article == None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         article.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -229,11 +235,13 @@ class ElderDetailView(APIView):
     def get_object(self, id):
         try:
             return Elder.objects.get(pk=id)
-        except Service.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        except Elder.DoesNotExist:
+            return None
 
     def get(self, request, id):
         service = self.get_object(id)
+        if service == None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = RegisterElderSerializer(service)
         print(len(serializer.data))
         return Response(serializer.data)
@@ -249,29 +257,26 @@ class ElderDetailView(APIView):
 
     def delete(self, request, id):
         article = self.get_object(id)
+        if article == None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         article.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class GetVolunteers(APIView):
-    # permission_classes = [permissions.IsAuthenticated, ]
-
     def get(self,request,id,format=None):
         try:
             elder = Elder.objects.get(pk=id)
-            print(elder)
         except Elder.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         current_location = elder.location
-        volunteers = TestVolunteer.objects.filter(location__dwithin=(current_location, 1.6), availability=True
+        volunteers = TestVolunteer.objects.filter(location__dwithin=(current_location, 1), availability=True
                                               ).annotate(distance=Distance('location', current_location))
 
         serializer = RegisterTestVolunteerSerializer(volunteers, many=True)
         return Response(serializer.data)
 
 class FeedbackSubmitAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated, ]
-
     def get(self, request, format=None):
         feedback = Feedback.objects.all()
         serializer = FeedbackSerializer(feedback, many=True)
@@ -285,3 +290,33 @@ class FeedbackSubmitAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+def notifications(request):
+    # print(phone_no)
+    # phone_no = "6303588356"
+    # account_sid = 'AC56e26320fee387bc8bcaf52128c52138'
+    # auth_token  = '10925b2912913cfba8f5409ba655673d'
+    # client = Client(account_sid, auth_token)
+
+    # message = client.messages.create(
+    #     body="Your service is booked",
+    #     to="+91" + phone_no,
+    #     from_="+19105861815",
+    #     )
+    # print (message.sid)
+
+    phone_no = "6382677337"
+    account_sid = 'ACf62e531f2099e445acf3cce250fbdc6a'
+    auth_token  = '2ac0f267f0e3eefea063b67013dff017'
+    client = Client(account_sid, auth_token)
+
+    message = client.messages.create(
+        body="Your service is booked",
+        to="+91" + phone_no,
+        from_="+12512500974",
+        )
+    print (message.sid)
+    data = {'message': "Notifcation successfully sent !"}
+    return Response(data, status=status.HTTP_200_OK)
+

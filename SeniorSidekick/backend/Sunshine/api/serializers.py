@@ -5,6 +5,7 @@ from .models import *
 from rest_framework.validators import UniqueValidator
 from django.conf import settings
 from django.contrib.auth import get_user_model
+# from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 User = get_user_model()  # custom user model
 
@@ -65,6 +66,25 @@ class RegisterTestVolunteerSerializer(serializers.ModelSerializer):
         volunteer.save()
         return volunteer
 
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop('user')
+        each = TestVolunteer.objects.get(user=instance.user)
+        cuser = instance.user
+        cuser.username = user_data.get('username', cuser.username)
+        cuser.password = user_data.get('password', cuser.password)
+        cuser.email = user_data.get('email', cuser.email)
+        cuser.save()
+
+        each.user = cuser
+        each.phone_no =  validated_data.get('phone_no', each.phone_no)
+        each.address =  validated_data.get('address', each.address)
+        each.volunteer_age =  validated_data.get('volunteer_age', each.volunteer_age)
+        each.location =  validated_data.get('location', each.location)
+        each.availability =  validated_data.get('availability', each.availability)
+        each.services_available =  validated_data.get('services_available', each.services_available)
+        each.save()
+        return instance
+
 
 class RegisterElderSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer()
@@ -91,6 +111,24 @@ class RegisterElderSerializer(serializers.ModelSerializer):
         elder.elder_age = validated_data['elder_age']
         elder.save()
         return elder
+
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop('user')
+        each = Elder.objects.get(user=instance.user)
+        cuser = instance.user
+        cuser.username = user_data.get('username', cuser.username)
+        cuser.password = user_data.get('password', cuser.password)
+        cuser.email = user_data.get('email', cuser.email)
+        cuser.save()
+
+        each.user = cuser
+        each.phone_no =  validated_data.get('phone_no', each.phone_no)
+        each.address =  validated_data.get('address', each.address)
+        each.elder_age =  validated_data.get('volunteer_age', each.elder_age)
+        each.location =  validated_data.get('location', each.location)
+        each.save()
+        return instance
+    
 
 class FeedbackSerializer(serializers.ModelSerializer):
     time = serializers.DateTimeField(format='%d-%m-%Y %H:%m')
