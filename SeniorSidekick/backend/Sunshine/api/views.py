@@ -15,6 +15,8 @@ from django.contrib.auth import logout, authenticate
 from rest_framework.decorators import api_view
 
 
+
+
 User = get_user_model()
 
 
@@ -88,6 +90,7 @@ def current_user(request):
         'username': user.username
     })
 
+
 # Register API
 class RegisterAPI(generics.GenericAPIView):
     serializer_class = RegisterTestVolunteerSerializer
@@ -106,7 +109,14 @@ class RegisterAPI(generics.GenericAPIView):
             "phone_no": serializer.validated_data['phone_no'],
             "location": serializer.validated_data['location'],
             "availability": serializer.validated_data['availability'],
-            "token": AuthToken.objects.create(user)[1]
+            "address_line1" : serializer.validated_data['address_line1'],
+            "address_line2" : serializer.validated_data['address_line2'],
+            "area" : serializer.validated_data['area'],
+            "city" : serializer.validated_data['city'],
+            "state" : serializer.validated_data['state'],
+            "country" : serializer.validated_data['country'],
+            "pincode" : serializer.validated_data['pincode'],
+            "token": AuthToken.objects.create(user)[1],
             })
 
 
@@ -157,6 +167,13 @@ class RegisterElderAPI(generics.GenericAPIView):
             "elder_age": serializer.validated_data['elder_age'],
             "phone_no": serializer.validated_data['phone_no'],
             "location": serializer.validated_data['location'],
+            "address_line1" : serializer.validated_data['address_line1'],
+            "address_line2" : serializer.validated_data['address_line2'],
+            "area" : serializer.validated_data['area'],
+            "city" : serializer.validated_data['city'],
+            "state" : serializer.validated_data['state'],
+            "country" : serializer.validated_data['country'],
+            "pincode" : serializer.validated_data['pincode'],
             "token": AuthToken.objects.create(user)[1]
             })
 

@@ -33,15 +33,15 @@ class Experience(models.Model):
     date_of_service = models.DateTimeField(auto_now_add=True)
     type_of_service = models.ForeignKey('Service', on_delete=models.CASCADE)
 
-class Address(models.Model):
+# class Address(models.Model):
     # address_id = models.AutoField(primary_key=True, auto_created=True)
-    address_line1 = models.CharField(max_length=150)
-    address_line2 = models.CharField(max_length=150, blank=True)
-    area = models.CharField(max_length=50)
-    city = models.CharField(max_length=100)
-    state = models.CharField(max_length=100)
-    country = models.CharField(max_length=100)
-    pincode = models.CharField(max_length=10)
+    # address_line1 = models.CharField(max_length=150)
+    # address_line2 = models.CharField(max_length=150, blank=True)
+    # area = models.CharField(max_length=50)
+    # city = models.CharField(max_length=100)
+    # state = models.CharField(max_length=100)
+    # country = models.CharField(max_length=100)
+    # pincode = models.CharField(max_length=10)
 
     def __str__(self):
         return self.city + ", " + self.state
@@ -50,10 +50,17 @@ class TestVolunteer(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name="test_volunteer", null=True)
     volunteer_age = models.IntegerField(validators=[MinValueValidator(5), MaxValueValidator(100)])
     phone_no = models.CharField(max_length=10)
-    address = models.ForeignKey('Address', on_delete=models.PROTECT)
+    # address = models.ForeignKey('Address', on_delete=models.PROTECT)
     location = models.PointField(null=True)
     availability = models.BooleanField(default=False)
     services_available = models.ForeignKey('Service', on_delete=models.CASCADE)
+    address_line1 = models.CharField(max_length=150)
+    address_line2 = models.CharField(max_length=150, blank=True)
+    area = models.CharField(max_length=50)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+    pincode = models.CharField(max_length=10)
 
     def __str__(self):
         return self.user.username
@@ -64,7 +71,14 @@ class Elder(models.Model):
     elder_age = models.IntegerField(validators=[MinValueValidator(20), MaxValueValidator(110)])
     phone_no = models.CharField(max_length=10)
     location = models.PointField(null=True)
-    address = models.ForeignKey('Address', on_delete=models.PROTECT)
+    # address = models.ForeignKey('Address', on_delete=models.PROTECT)
+    address_line1 = models.CharField(max_length=150)
+    address_line2 = models.CharField(max_length=150, blank=True)
+    area = models.CharField(max_length=50)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+    pincode = models.CharField(max_length=10)
 
     def __str__(self):
         return self.user.username

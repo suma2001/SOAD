@@ -6,7 +6,7 @@ from django.contrib.auth.admin import UserAdmin
 
 admin.site.register(CustomUser,UserAdmin)
 admin.site.register(Service)
-admin.site.register(Address)
+# admin.site.register(Address)
 admin.site.register(TestVolunteer, OSMGeoAdmin)
 admin.site.register(Elder, OSMGeoAdmin)
 admin.site.register(Feedback)
