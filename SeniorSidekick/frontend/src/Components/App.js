@@ -12,14 +12,13 @@ import VolunteerList from './Pages/VolunteerList/vlist';
 import Profile from './Pages/Profile/profile';
 import ContactUs from './Pages/ContactUs/contact';
 import Feedback from './Pages/Feedback/feedback';
-import SimpleMap from './SimpleMap';
 
 function App() {
   return (
     <Router>
       <ThemeProvider theme={theme}>
       <div className="App">
-        <Header/>
+        {/* <Header/> */}
         <Route exact path="/">
           <Home />
         </Route>
@@ -43,9 +42,6 @@ function App() {
           </Route> */}
         <Route exact path="/feedback">
           <Feedback />
-        </Route>
-        <Route exact path="/map">
-          <SimpleMap />
         </Route>
         <Footer />
       </div>

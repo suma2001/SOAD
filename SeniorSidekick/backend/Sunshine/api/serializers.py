@@ -39,7 +39,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
-        fields = ['name', 'description']
+        fields = ['id', 'name', 'description']
 
 
 # User Serializer
@@ -55,7 +55,7 @@ class RegisterTestVolunteerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TestVolunteer
-        fields = ['user', 'volunteer_age', 'phone_no', 'availability', 'location', 'services_available','address_line1','address_line2',
+        fields = ['id', 'user', 'volunteer_age', 'phone_no', 'availability', 'location', 'services_available','address_line1','address_line2',
                     'area','city','state','country','pincode']
         read_only_fields = ('email',)
 
@@ -120,7 +120,7 @@ class RegisterElderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Elder
-        fields = ['user', 'elder_age',
+        fields = ['id', 'user', 'elder_age',
                   'phone_no', 'location','address_line1','address_line2',
                     'area','city','state','country','pincode']
         read_only_fields = ('email',)
@@ -166,6 +166,12 @@ class RegisterElderSerializer(serializers.ModelSerializer):
     #     each.save()
     #     return instance
     
+class RequestServiceSerializer(serializers.ModelSerializer):
+    time = serializers.DateTimeField(format='%d-%m-%Y %H:%m')
+    class Meta:
+        model = Service
+        fields = ['name', 'time']
+
 
 class FeedbackSerializer(serializers.ModelSerializer):
     time = serializers.DateTimeField(format='%d-%m-%Y %H:%m')

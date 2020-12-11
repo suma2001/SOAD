@@ -41,9 +41,11 @@ class VolunteerList extends Component {
     super(props);
     this.state = {
       volunteers: [],
+      elder: '',
+      volunteer: ''
     }
   }
-
+  
   async componentDidMount() {
     try { 
         const res = await fetch('http://127.0.0.1:8000/api/volunteers/1/');
@@ -57,16 +59,55 @@ class VolunteerList extends Component {
     }
   
   }
+
+  handleSubmit = helper => event =>{
+    this.setState({
+      elder: '1',
+      volunteer: helper.id
+    })
+    var body = this.state
+    
+    console.log(JSON.stringify({
+      elder: 1,
+      volunteer: helper.id
+    }))
+    // this.state.volunteer = volunteer.id
+    fetch('http://127.0.0.1:8000/api/Addelders/', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        elder: 1,
+        volunteer: helper.id
+      })
+    }).then(function(response) {
+      
+      console.log(response)
+      return response.json();
+    });
+
+    event.preventDefault();
+  }
+
+  // handleSubmit = text => event=> {
+  //   console.log(text)
+  //   event.preventDefault()
+    
+  // }
+
   render() {
     const {classes} = this.props;
-
+    var val;
     return (
       <div className={classes.root}>
       <Typography className={classes.typography}>List of Volunteers</Typography>
       <Grid container justify="space-evenly">
       {this.state.volunteers.map(volunteer => (
+        // console.log("VOlunteer: ", volunteer.id),
         <Grid sm={5}>
-        <Card className={classes.card}>
+        <Card className={classes.card} onClick={this.handleSubmit(volunteer)}>
           <CardHeader classes={{subheader: classes.subheader,}}
             avatar={
               <Avatar aria-label="person" className={classes.avatar}>

@@ -4,36 +4,61 @@ import "./style.css";
 import {Link} from "react-scroll";
 import logo from '../../Images/logo.png';
 import Button from '@material-ui/core/Button';
-import { FacebookLoginButton, GoogleLoginButton } from "react-social-login-buttons";
 
 class Header extends React.Component {
-    constructor(props) {
-      super(props);
-      this.handleLoginClick = this.handleLoginClick.bind(this);
-      this.handleLogoutClick = this.handleLogoutClick.bind(this);
-      this.state = {isloggedin: false};
-    }
+    // constructor(props) {
+    //   super(props);
+    //   this.state = {
+    //       isloggedin : false,
+    //   }
+    // }
+
+    // componentDidMount() {
+    //     fetch("http://127.0.0.1:8000/api/currentuser/")
+    //     .then((response) => {
+    //         // console.log(response.json());
+    //       return response.json();
+    //     })
+    //     .then(data => {
+    //       let servicesFromApi = data;
+    //       console.log(servicesFromApi);
+    //       this.setState({
+    //         services: servicesFromApi,
+    //       });
+    //     }).catch(error => {
+    //       console.log(error);
+    //     })
+    //   }
+
+    componentDidMount() {
+        const apiUrl = 'http://127.0.0.1:8000/api/currentuser/';
+        fetch(apiUrl)
+          .then((response) => response.json())
+          .then((data) => console.log('This is your data', data));
+      }
 
     handleLoginClick() {
       console.log("HIi");
-      this.setState({isloggedin: true});
+    //   this.setState({isloggedin: true});
     }
     
     handleLogoutClick() {
-      this.setState({isloggedin: false});
+    //   this.setState({isloggedin: false});
     }
 
     render(){
-        const isloggedin = this.state.isloggedin;
-        let navitem;
+        // let isloggedin = {this.state.isLoggedIn};
+        // let isloggedin = true;
+        // console.log(this.props.isLoggedIn);
+        // let navitem;
 
-        if(isloggedin) {
-            navitem = <Button onClick={this.handleLogoutClick} style={{color: "#EFBC9B"}}>Logout</Button>;
-        }
-        else {
-            navitem = <Button onClick={this.handleLoginClick} style={{color: "#EFBC9B"}}>Login</Button>;
-            console.log({isloggedin});
-        }
+        // if(isloggedin) {
+        //     navitem = <Button onClick={this.handleLogoutClick} style={{color: "#EFBC9B"}}>Logout</Button>;
+        // }
+        // else {
+        //     navitem = <Button onClick={this.handleLoginClick} style={{color: "#EFBC9B"}}>Login</Button>;
+        //     console.log({isloggedin});
+        // }
         
         return(
             <div>
@@ -77,7 +102,7 @@ class Header extends React.Component {
                             <Link to="contact-us" smooth duration={500} style={{color: "#EFBC9B"}}>Contact Us</Link>
                         </Nav.Link>
                         <Nav.Link href="/login" style={{color: "#EFBC9B"}}>Login</Nav.Link>
-                        {/* {isloggedin ? <FacebookLoginButton onClick={this.handleLogoutClick} /> : <GoogleLoginButton onClick={this.handleLoginClick} />} */}
+                        {/* {isloggedin ? <Nav.Link href="/login" style={{color: "#ffffff"}}>Logout</Nav.Link> : <Nav.Link href="/login" style={{color: "#EFBC9B"}}>Login</Nav.Link>} */}
                         </Nav>
                     </Navbar.Collapse>
                     </Navbar>

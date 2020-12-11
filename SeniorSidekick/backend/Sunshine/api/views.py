@@ -13,9 +13,8 @@ from knox.models import AuthToken
 from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.auth import logout, authenticate
 from rest_framework.decorators import api_view
-
-
-
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
 
 User = get_user_model()
 
@@ -85,9 +84,19 @@ class ServicesDetailsView(APIView):
 @api_view(['GET'])
 def current_user(request):
     user = request.user
-    print(user)
+    # tokens = ''
+    # # print(AuthToken.objects.filter(user))
+    # for token in AuthToken.objects.all():
+    #     # print(type(token))
+    #     RHS = str(token).split(':')[1].strip()
+    #     LHS = str(token).split(':')[0].strip()
+    #     print(RHS)
+    #     if RHS==user:
+    #         tokens=LHS
+    #         break
     return Response({
-        'username': user.username
+        'username': user.username,
+        # 'token': tokens
     })
 
 
@@ -134,6 +143,7 @@ class LoginAPI(KnoxLoginView):
         print(user.id)
         login(request, user)
         print(request.user)
+        # window.localStorage.setItem(request.user.token, request.user)
         return super(LoginAPI, self).post(request, format=None)
 
 class LogoutAPI(APIView):
@@ -279,7 +289,9 @@ class ElderDetailView(APIView):
         article.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class GetVolunteers(APIView):
+
     def get(self,request,id,format=None):
         try:
             elder = Elder.objects.get(pk=id)
@@ -287,11 +299,56 @@ class GetVolunteers(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         current_location = elder.location
-        volunteers = TestVolunteer.objects.filter(location__dwithin=(current_location, 1), availability=True
+        print(elder.request_service)
+        print(TestVolunteer.objects.filter(services_available=elder.request_service))
+        if elder.request_service!=0:
+            volunteers = TestVolunteer.objects.filter(location__dwithin=(current_location, 100), availability=True, services_available=elder.request_service
                                               ).annotate(distance=Distance('location', current_location))
+        else:
+            volunteers = TestVolunteer.objects.filter(location__dwithin=(current_location, 100), availability=True,
+                                               ).annotate(distance=Distance('location', current_location))
+
+
 
         serializer = RegisterTestVolunteerSerializer(volunteers, many=True)
         return Response(serializer.data)
+
+class RequestServiceAPIView(APIView):
+
+    def post(self, request, format=None):
+        print("HI")
+        serializer = RequestServiceSerializer(data=request.data)
+        print(serializer.is_valid())
+        if serializer.is_valid():
+            # serializer.save()
+            print(serializer.data)
+            service_id = serializer.data['name']
+            print(service_id)
+            # service_available = TestVolunteer.objects.get(pk=1).services_available
+            try:
+                elder = Elder.objects.get(pk=1)
+            except Elder.DoesNotExist:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+            elder.request_service = int(service_id)
+            print(elder.request_service)
+            elder.save()
+            print(elder.request_service)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# @csrf_exempt
+# def AddElders(request):
+#     if request.method=="POST":
+#         print("Helo")
+#         print(request.POST.get('elder'))
+#         # elderid = request.POST['elder']
+#         # volunteerid = request.POST['volunteer']
+#         # volunteer = TestVolunteer.objects.get(pk=volunteerid)
+#         # if elderid not in volunteer.elder_ids:
+#         #     volunteer.elder_ids.append(elderid)
+#         # volunteer.save()
+#         return HttpResponse("Thank you") 
+
 
 class FeedbackSubmitAPIView(APIView):
     def get(self, request, format=None):

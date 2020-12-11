@@ -15,6 +15,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { withStyles } from '@material-ui/core/styles';
 import Header from '../../Components/Header/header';
 import { useHistory } from "react-router-dom";
+import { browserHistory } from 'react-router';
 
 function Copyright() {
   return (
@@ -77,6 +78,8 @@ class Login extends React.Component {
   handleLoginClick() {
     console.log("Hello")
     this.setState({isLoggedIn: true});
+    console.log("user logged in is: " + this.state.isLoggedIn);
+    // browserHistory.push("/feedback");
   }
 
   handleLogoutClick() {
@@ -103,8 +106,8 @@ class Login extends React.Component {
   
     event.preventDefault();
     
-    const { history } = this.props;
-    history.push('/');
+    // const { history } = this.props;
+    // history.push('/');
   }
 
   render(){
@@ -112,10 +115,14 @@ class Login extends React.Component {
     const {classes} = this.props;
 
     const isLoggedIn = this.state.isLoggedIn;
-
+    console.log("user: " + isLoggedIn);
     return (
-      <Grid container component="main" className={classes.root}>
+      
+      <div>
+        {/* <Header isLoggedIn={this.state.isLoggedIn}/> */}
+        <Grid container component="main" className={classes.root}>
         <CssBaseline />
+        
         <Grid item xs={false} sm={4} md={7} className={classes.image} />
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <div className={classes.paper}>
@@ -163,6 +170,7 @@ class Login extends React.Component {
                 variant="contained"
                 color="primary"
                 className={classes.submit}
+                href="/"
               >
                 Sign In
               </Button>
@@ -173,7 +181,7 @@ class Login extends React.Component {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="#" variant="body2">
+                  <Link href="/register" variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
@@ -185,6 +193,8 @@ class Login extends React.Component {
           </div>
         </Grid>
       </Grid>
+      </div>
+      
     );
   }
 }
