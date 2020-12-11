@@ -12,6 +12,7 @@ import VolunteerList from './Pages/VolunteerList/vlist';
 import Profile from './Pages/Profile/profile';
 import ContactUs from './Pages/ContactUs/contact';
 import Feedback from './Pages/Feedback/feedback';
+import SimpleMap from '../SimpleMap';
 
 function App() {
   return (
@@ -42,6 +43,9 @@ function App() {
           </Route> */}
         <Route exact path="/feedback">
           <Feedback />
+        </Route>
+        <Route exact path="/map">
+          <SimpleMap />
         </Route>
         <Footer />
       </div>

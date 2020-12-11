@@ -32,8 +32,8 @@ export default function HomeHero() {
                   Envision a community where aging is a positive experience
               </Typography>
               <Typography variant="body2" style={{fontWeight: "500"}}>Connect elderly with young adults</Typography>
-              <Button style={{backgroundColor: "#63326E", padding: "5px 20px", margin: "15px 5px"}} color="secondary">Get Help</Button>
-              <Button style={{backgroundColor: "#63326E", padding: "5px 20px", margin: "15px 5px"}} color="secondary">Offer Help</Button>
+              <Button href="/request-service" style={{backgroundColor: "#63326E", padding: "5px 20px", margin: "15px 5px"}} color="secondary">Get Help</Button>
+              <Button href="/map" style={{backgroundColor: "#63326E", padding: "5px 20px", margin: "15px 5px"}} color="secondary">Offer Help</Button>
           </Grid>
           <Grid>
               <Container>
