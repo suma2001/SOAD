@@ -133,19 +133,27 @@ class RegisterElderSerializer(serializers.ModelSerializer):
                                          email=user_data['email'],
                                          password=user_data['password'])
 
+        address_line1 = validated_data['address_line1']
+        address_line2 = validated_data['address_line2']
+        area = validated_data['area']
+        city = validated_data['city']
+        state = validated_data['state']
+        country = validated_data['country']
+        pincode = validated_data['pincode']
+
         elder = Elder()
         elder.user = user1
         elder.phone_no = validated_data['phone_no']
         # elder.address = validated_data['address']
-        elder.location = validated_data['location']
         elder.elder_age = validated_data['elder_age']
-        elder.address_line1 = validated_data['address_line1']
-        elder.address_line2 = validated_data['address_line2']
-        elder.area = validated_data['area']
-        elder.city = validated_data['city']
-        elder.state = validated_data['state']
-        elder.country = validated_data['country']
-        elder.pincode = validated_data['pincode']
+        elder.address_line1 = address_line1
+        elder.address_line2 = address_line2
+        elder.area = area
+        elder.city = city
+        elder.state = state
+        elder.country = country
+        elder.pincode = pincode
+        elder.location = getLocation(address_line1,address_line2,area,city,state,country,pincode)
         elder.save()
         return elder
 
@@ -172,6 +180,11 @@ class RequestServiceSerializer(serializers.ModelSerializer):
         model = Service
         fields = ['name', 'time']
 
+class DirectionsSerializer(serializers.Serializer):
+    distance = serializers.CharField(max_length = 20)
+    estimated_time = serializers.CharField(max_length = 20)
+    start_location = serializers.CharField(max_length = 1000)
+    end_location = serializers.CharField(max_length = 1000)
 
 class FeedbackSerializer(serializers.ModelSerializer):
     time = serializers.DateTimeField(format='%d-%m-%Y %H:%m')
