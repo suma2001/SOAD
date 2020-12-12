@@ -62,39 +62,11 @@ class SignIn extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      services: [],
-      username: '',
       email : '',
       password: '',
-      volunteer_age: '',
+      elder_age: '',
       phone_no: '',
-      availability: '',
-      services_available: '',
-      address_line1: '',
-      address_line2: '',
-      area: '',
-      city: '',
-      state: '',
-      country: '',
-      pincode: '',
     }
-  }
-
-  componentDidMount() {
-    fetch("http://127.0.0.1:8000/api/services/")
-    .then((response) => {
-      return response.json();
-    })
-    .then(data => {
-      let servicesFromApi = data.map(service => {
-        return {value: service.name, display: service.name}
-      });
-      this.setState({
-        services: [{value: '', display: '(Select the service)'}].concat(servicesFromApi)
-      });
-    }).catch(error => {
-      console.log(error);
-    })
   }
 
   handleChange = (event) => {
@@ -103,17 +75,15 @@ class SignIn extends React.Component {
 
   handleSubmit = (event) => {
     var body = this.state
-    fetch('http://127.0.0.1:8000/api/register/', {
+    fetch('http://127.0.0.1:8000/api/elderregister/', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      
       body: JSON.stringify(body)
       }).then(function(response) {
-        console.log(body);
-        console.log(response);
+        console.log(response)
         return response.json();
     });
 
@@ -121,7 +91,7 @@ class SignIn extends React.Component {
   }
 
   render() {
-    const { username, email, password, volunteer_age, phone_no, availability, services_available, address_line1, address_line2, area, city, state, country, pincode } = this.state;
+    const { email, password, elder_age, phone_no } = this.state;
     const { classes } = this.props;
 
       return (
@@ -137,23 +107,11 @@ class SignIn extends React.Component {
                 Sign up
               </Typography>
               <form onSubmit={this.handleSubmit} className={classes.form}>
-                <Grid>
                 <TextField
                   variant="outlined"
                   margin="normal"
                   required
-                  id="username"
-                  value={username}
-                  onChange={this.handleChange}
-                  label="Username"
-                  name="username"
-                  autoComplete="username"
-                  autoFocus
-                />
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
+                  fullWidth
                   id="email"
                   value={email}
                   onChange={this.handleChange}
@@ -162,12 +120,11 @@ class SignIn extends React.Component {
                   autoComplete="email"
                   autoFocus
                 />
-                </Grid>
-                <Grid container justify="space-between" alignContent="stretch">
                 <TextField
                   variant="outlined"
                   margin="normal"
                   required
+                  fullWidth
                   name="password"
                   label="Password"
                   type="password"
@@ -180,146 +137,39 @@ class SignIn extends React.Component {
                   variant="outlined"
                   margin="normal"
                   required
+                  fullWidth
                   name="re-enter password"
                   label="Re-enter Password"
                   type="password"
                   id="password"
                   autoComplete="current-password"
                 />
-                <select value={availability}
-                onChange={e => this.setState({availability: JSON.parse(e.target.value)})}>
-                <option value={true}>
-                  Available
-                </option>
-                <option value={false}>
-                  Busy
-                </option>
-              </select>
-                </Grid>
-                <Grid container justify="space-between" alignContent="stretch">
                 <TextField
                   variant="outlined"
                   margin="normal"
                   required
-                  name="volunteer_age"
+                  fullWidth
+                  name="elder_age"
                   label="Age"
                   type="number"
-                  value={volunteer_age}
+                  value={elder_age}
                   onChange={this.handleChange}
-                  id="volunteer_age"
-                  autoComplete="volunteer_age"
+                  id="elder_age"
+                  autoComplete="elder_age"
                 />
-                <select className={classes.services} value={services_available}
-                onChange={e => this.setState({services_available: e.target.value, validationError: e.target.value === "" ? "You must select a service" : ""})}>
-                {this.state.services.map((service) => 
-                <option key={service.value} value={service.value}>
-                  {service.display}
-                </option>)}
-              </select>
-                </Grid>
                 <TextField
                   variant="outlined"
                   margin="normal"
                   required
                   fullWidth
-                  name="address_line1"
-                  label="Address Line 1"
-                  type="text"
-                  value={address_line1}
-                  onChange={this.handleChange}
-                  id="address_line1"
-                  autoComplete="address_line1"
-                />
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  name="address_line2"
-                  label="Address Line 2"
-                  type="text"
-                  value={address_line2}
-                  onChange={this.handleChange}
-                  id="address_line2"
-                  autoComplete="address_line2"
-                />
-                <Grid>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  name="area"
-                  label="Area"
-                  type="text"
-                  value={area}
-                  onChange={this.handleChange}
-                  id="area"
-                  autoComplete="area"
-                />
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  name="city"
-                  label="City"
-                  type="text"
-                  value={city}
-                  onChange={this.handleChange}
-                  id="city"
-                  autoComplete="city"
-                />
-                </Grid>
-                <Grid>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  name="state"
-                  label="State"
-                  type="text"
-                  value={state}
-                  onChange={this.handleChange}
-                  id="state"
-                  autoComplete="state"
-                />
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  name="country"
-                  label="Country"
-                  type="text"
-                  value={country}
-                  onChange={this.handleChange}
-                  id="country"
-                  autoComplete="country"
-                />
-                </Grid>
-                <Grid>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  name="pincode"
-                  label="Pincode"
-                  type="text"
-                  value={pincode}
-                  onChange={this.handleChange}
-                  id="pincode"
-                  autoComplete="pincode"
-                />
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
                   name="phone_no"
                   label="Phone Number"
                   type="number"
                   value={phone_no}
                   onChange={this.handleChange}
                   id="phone_no"
-                  autoComplete="phone_number"
+                  autoComplete="phone_no"
                 />
-                </Grid>
                 <FormControlLabel
                   control={<Checkbox value="remember" color="primary" />}
                   label="Remember me"
@@ -335,7 +185,7 @@ class SignIn extends React.Component {
                 </Button>
                 <Grid container>
                   <Grid container direction="row" justify="flex-end" alignItems="flex-end">
-                    <Link href="/login" variant="body2">
+                    <Link href="/elder-login" variant="body2">
                       {"Already have an account? Sign In"}
                     </Link>
                   </Grid>

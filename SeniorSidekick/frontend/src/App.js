@@ -22,18 +22,22 @@ function App() {
         <Header/>
         <Route exact path="/">
           <Home />
+          <Footer />
         </Route>
         <Route exact path="/login">
           <Login />
+          <Footer />
         </Route>
         <Route exact path="/register">
           <Register />
         </Route>
         <Route exact path="/request-service">
           <RequestService />
+          <Footer />
         </Route>
         <Route exact path="/volunteer-list">
           <VolunteerList />
+          <Footer />
         </Route>
         {/* <Route exact path="/profile">*/} {/*make this as /profile:id later for each volunteer*/}
           {/* <Profile />
@@ -43,11 +47,12 @@ function App() {
           </Route> */}
         <Route exact path="/feedback">
           <Feedback />
+          <Footer />
         </Route>
         <Route exact path="/map">
           <SimpleMap />
+          <Footer />
         </Route>
-        <Footer />
       </div>
       </ThemeProvider>
     </Router>

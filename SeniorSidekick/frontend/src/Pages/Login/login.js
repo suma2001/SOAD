@@ -15,7 +15,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { withStyles } from '@material-ui/core/styles';
 import Header from '../../Components/Header/header';
 import { useHistory } from "react-router-dom";
-import { browserHistory } from 'react-router';
+import { browserHistory, Redirect } from 'react-router';
 
 function Copyright() {
   return (
@@ -101,6 +101,9 @@ class Login extends React.Component {
       body: JSON.stringify(body)
     }).then(function(response) {
       console.log(response)
+      if (response.status === 200){
+        return <Redirect push to="/" />
+      }
       return response.json();
     });
   
