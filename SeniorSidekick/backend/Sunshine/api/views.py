@@ -362,8 +362,8 @@ class GetVolunteers(APIView):
 
     def get_object_id(self, id):
         try:
-            return TestVolunteer.objects.get(pk=id)
-        except TestVolunteer.DoesNotExist:
+            return Elder.objects.get(pk=id)
+        except Elder.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
     def get(self, request, token, format=None):
