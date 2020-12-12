@@ -18,6 +18,12 @@ from django.http import HttpResponse
 from twilio.rest import Client
 from django.core.mail import send_mail
 from knox.auth import TokenAuthentication
+import requests
+from requests.api import request
+from rest_framework.reverse import reverse
+from googlemaps import Client as GoogleMaps
+import json 
+import urllib.request
 
 User = get_user_model()
 
@@ -134,7 +140,7 @@ class RegisterAPI(generics.GenericAPIView):
             "country": serializer.validated_data['country'],
             "pincode": serializer.validated_data['pincode'],
             "token": AuthToken.objects.create(user)[1],
-        })
+        },status = status.HTTP_201_CREATED)
 
 
 # Login API
@@ -207,7 +213,7 @@ class RegisterElderAPI(generics.GenericAPIView):
             "country": serializer.validated_data['country'],
             "pincode": serializer.validated_data['pincode'],
             "token": AuthToken.objects.create(user)[1]
-        })
+        },status=status.HTTP_201_CREATED)
 
 
 # Login API
@@ -228,14 +234,14 @@ class TestVolunteerView(APIView):
         serializer = RegisterTestVolunteerSerializer(T_volunteers, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
-        serializer = RegisterTestVolunteerSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            # user = serializer.validated_data['user']
-            # login(request, user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # def post(self, request, format=None):
+    #     serializer = RegisterTestVolunteerSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         # user = serializer.validated_data['user']
+    #         # login(request, user)
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class TestVolunteerDetailView(APIView):
@@ -292,12 +298,12 @@ class ElderListView(APIView):
         serializer = RegisterElderSerializer(elders, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
-        serializer = RegisterElderSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # def post(self, request, format=None):
+    #     serializer = RegisterElderSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ElderDetailView(APIView):
@@ -388,6 +394,31 @@ class GetVolunteers(APIView):
 
 class RequestServiceAPIView(APIView):
 
+    def get_matching_volunteers(self,service_name,user):
+        matching_volunteers = []
+        # user_data = requests.get(
+        #     url="http://127.0.0.1:8000/api/currentuser/"
+        # )
+        # user_data = user_data.json()
+        # print(user_data)
+        # print("Hello")
+        # print(user_data['username'])
+        # print(user_data[0].data['name'])
+        # username = user_data['username']
+        # print(username)
+        # user = User.objects.get(username=username)
+        elder_id = Elder.objects.filter(user=user)[0].id
+        print(elder_id)
+        url = "http://127.0.0.1:8000/api/volunteers/" + str(elder_id)+"/"
+        nearest_volunteers = requests.get(url=url).json()
+        print(nearest_volunteers)
+        for volunteer in nearest_volunteers:
+            service_id = volunteer['services_available']
+            service = Service.objects.get(id=service_id)
+            if service.name == service_name and volunteer['availability']==True:
+                matching_volunteers.append(volunteer)
+        return matching_volunteers
+
     def post(self, request, format=None):
         print("HI")
         serializer = RequestServiceSerializer(data=request.data)
@@ -408,6 +439,68 @@ class RequestServiceAPIView(APIView):
             print(elder.request_service)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class GetDirections(APIView):
+
+    def getPlaceID(self,address_line1,address_line2,area,city,state,country,pincode):
+        gmaps = GoogleMaps('AIzaSyBoy1plslvW_UTSM3JTWNLijJL1KjsKf60')
+        address = str(address_line1)+ ',' + str(address_line2)+ ',' + str(area) + ',' + str(city) + ',' + str(state) + ',' + str(country) + ',' + str(pincode)
+        geocode_result = gmaps.geocode(address)
+        print(geocode_result[0]['formatted_address'])
+        place_id = geocode_result[0]['place_id']
+        return place_id
+    
+    def get_address(self,lat,lng):
+        endpoint = "https://maps.googleapis.com/maps/api/geocode/json?"
+        api_key = "AIzaSyBoy1plslvW_UTSM3JTWNLijJL1KjsKf60"
+        nav_request = "latlng=" + str(lat) + "," + str(lng) + "&key=" + api_key
+        request = endpoint + nav_request
+        response = urllib.request.urlopen(request).read()
+        results = json.loads(response)['results']
+        address = results[0]['formatted_address']
+        return address
+
+    def get_Directions(self,place_id1,place_id2):
+        endpoint = "https://maps.googleapis.com/maps/api/directions/json?"
+        api_key = "AIzaSyBoy1plslvW_UTSM3JTWNLijJL1KjsKf60"
+        nav_request = "origin=place_id:"+place_id1+"&destination=place_id:"+place_id2+"&key="+api_key
+        request = endpoint + nav_request
+        response = urllib.request.urlopen(request).read()
+        directions = json.loads(response)
+        routes = directions['routes']
+        legs = routes[0]['legs']
+        steps = legs[0]['steps']
+        dir_list = []
+        for each in steps:
+            step = {}
+            step["distance"] = each['distance']['text']
+            step["estimated_time"] = each['duration']['text']
+            step["start_location"] = self.get_address(each['start_location']['lat'],each['start_location']['lng'])
+            step["end_location"] = self.get_address(each['end_location']['lat'],each['end_location']['lng'])
+            dir_list.append(step)
+        return dir_list
+    
+    def get(self,request,id,format=None):
+        try:
+            elder = Elder.objects.get(id=id)
+        except Elder.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        volunteer = TestVolunteer.objects.get(user = request.user)
+
+        elder_place_id = self.getPlaceID(elder.address_line1,elder.address_line2,elder.area,elder.city,elder.state,elder.country,elder.pincode)
+        volunteer_place_id = self.getPlaceID(volunteer.address_line1,volunteer.address_line2,volunteer.area,volunteer.city,volunteer.state,
+                                volunteer.country,volunteer.pincode)
+
+        print(elder.location)
+        print(volunteer.location)
+        print(elder_place_id)
+        print(volunteer_place_id)
+        steps = self.get_Directions(volunteer_place_id,elder_place_id)
+
+        serializer = DirectionsSerializer(steps, many=True)
+        print(serializer)
+        return Response(serializer.data,status=status.HTTP_200_OK)
 
 
 # @csrf_exempt

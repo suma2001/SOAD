@@ -18,15 +18,16 @@ urlpatterns = [
     # path('profiles/', ProfileAPIView.as_view()),
     path('Addelders/', AddElderAPIView.as_view(), name="AddElders"),
     path('Deleteelders/', DeleteElderAPIView.as_view(), name="DelElders"),
-    path('elders/',ElderListView.as_view(),name ='get_post_elder_profiles'),
+    path('elders/',ElderListView.as_view(),name ='get_elder_profiles'),
     path('elder/id/<int:token>/', ElderDetailView.as_view(), name='get_delete_update_elder_profile_id'),
     path('elder/<token>/',ElderDetailView.as_view(),name ='get_delete_update_elder_profile_token'),
     path('requestservice/',RequestServiceAPIView.as_view(),name ='get_post_service'),
     path('feedback/',FeedbackSubmitAPIView.as_view(),name ='get_post_feedback'),
-    path('test_volunteers/',TestVolunteerView.as_view(), name ='get_post_profiles'),
+    path('test_volunteers/',TestVolunteerView.as_view(), name ='get_profiles'),
     path('test_volunteer/id/<int:token>/', TestVolunteerDetailView.as_view(), name='get_delete_update_profile_id'),
     path('test_volunteer/<token>/',TestVolunteerDetailView.as_view(),name='get_delete_update_profile_token'),
     path('custom_users/',UsersAPIView.as_view()),
     path('volunteers/id/<int:token>/', GetVolunteers.as_view(), name='get_near_vol_id'),
-    path('volunteers/<token>/',GetVolunteers.as_view(),name='get_near_vol_token')
+    path('volunteers/<token>/',GetVolunteers.as_view(),name='get_near_vol_token'),
+    path('getdirections/<int:id>/',GetDirections.as_view())
 ]

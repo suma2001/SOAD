@@ -38,6 +38,18 @@ class CustomUserSerializer(serializers.ModelSerializer):
                                         password=validated_data['password'])
         user.save()
         return user
+    
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+
+        for (key, value) in validated_data.items():
+            setattr(instance, key, value)
+
+        if password is not None:
+            instance.set_password(password)
+
+        instance.save()
+        return instance
 
 
 class ServiceSerializer(serializers.ModelSerializer):
@@ -99,6 +111,26 @@ class RegisterTestVolunteerSerializer(serializers.ModelSerializer):
         volunteer.save()
         print(volunteer.location)
         return volunteer
+    
+    def update(self, instance, validated_data):
+        print("CAMMERERRR")
+
+        if 'user' in validated_data:
+            print("USERYES")
+            user_data = validated_data.pop('user')
+            password = user_data.pop('password', None)
+
+            for (key, value) in user_data.items():
+                setattr(instance.user, key, value)
+
+            if password is not None:
+                instance.user.set_password(password)
+
+            instance.user.save()
+        for (key, value) in validated_data.items():
+            setattr(instance, key, value)
+        instance.save()
+        return instance
 
     # def update(self, instance, validated_data):
     #     user_data = validated_data.pop('user')
@@ -138,21 +170,49 @@ class RegisterElderSerializer(serializers.ModelSerializer):
                                          email=user_data['email'],
                                          password=user_data['password'])
 
+        address_line1 = validated_data['address_line1']
+        address_line2 = validated_data['address_line2']
+        area = validated_data['area']
+        city = validated_data['city']
+        state = validated_data['state']
+        country = validated_data['country']
+        pincode = validated_data['pincode']
+
         elder = Elder()
         elder.user = user1
         elder.phone_no = validated_data['phone_no']
         # elder.address = validated_data['address']
-        elder.location = validated_data['location']
         elder.elder_age = validated_data['elder_age']
-        elder.address_line1 = validated_data['address_line1']
-        elder.address_line2 = validated_data['address_line2']
-        elder.area = validated_data['area']
-        elder.city = validated_data['city']
-        elder.state = validated_data['state']
-        elder.country = validated_data['country']
-        elder.pincode = validated_data['pincode']
+        elder.address_line1 = address_line1
+        elder.address_line2 = address_line2
+        elder.area = area
+        elder.city = city
+        elder.state = state
+        elder.country = country
+        elder.pincode = pincode
+        elder.location = getLocation(address_line1,address_line2,area,city,state,country,pincode)
         elder.save()
         return elder
+
+    def update(self, instance, validated_data):
+        print("CAMMERERRR")
+
+        if 'user' in validated_data:
+            print("USERYES")
+            user_data = validated_data.pop('user')
+            password = user_data.pop('password', None)
+
+            for (key, value) in user_data.items():
+                setattr(instance.user, key, value)
+
+            if password is not None:
+                instance.user.set_password(password)
+
+            instance.user.save()
+        for (key, value) in validated_data.items():
+            setattr(instance, key, value)
+        instance.save()
+        return instance
 
     # def update(self, instance, validated_data):
     #     user_data = validated_data.pop('user')
@@ -202,6 +262,11 @@ class DeleteElderSerializer(serializers.ModelSerializer):
         model = DeleteElder
         fields = ['elder', 'volunteer']
 
+class DirectionsSerializer(serializers.Serializer):
+    distance = serializers.CharField(max_length = 20)
+    estimated_time = serializers.CharField(max_length = 20)
+    start_location = serializers.CharField(max_length = 1000)
+    end_location = serializers.CharField(max_length = 1000)
 
 class FeedbackSerializer(serializers.ModelSerializer):
     time = serializers.DateTimeField(format='%d-%m-%Y %H:%m')
