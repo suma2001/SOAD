@@ -39,11 +39,12 @@ const useStyles = theme => ({
   },
 });
 
-class VolunteerList extends Component {
+class ElderList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      volunteers: [],
+      elders: [],
+      elderobjs: [],
       elder: '',
       volunteer: ''
     }
@@ -51,12 +52,25 @@ class VolunteerList extends Component {
   
   async componentDidMount() {
     try { 
-        const res = await fetch('http://127.0.0.1:8000/api/volunteers/'+localStorage.getItem('token')+'/');
-        const volunteers = await res.json();
+        const vol = await fetch('http://127.0.0.1:8000/api/test_volunteer/'+localStorage.getItem('token')+'/');
+        console.log("Vol: ", vol);
+        const vollist = await vol.json();
         this.setState({
-            volunteers
+            elders: vollist.elder_ids
         });
-        console.log(volunteers);
+        console.log(this.state.elders);
+        var i, eldid, eld, l=[];
+        for (i = 0; i < this.state.elders.length; i++) {
+            eldid = this.state.elders[i];
+            console.log(typeof(eldid));
+            eld = await fetch('http://127.0.0.1:8000/api/elder/id/'+ eldid.toString() +'/');
+            const obj = await eld.json();
+            l.push(obj);
+          }
+        this.setState({
+            elderobjs: l,
+        })
+        console.log(this.state.elderobjs);
     } catch (e) {
         console.log(e);
     }
@@ -64,27 +78,26 @@ class VolunteerList extends Component {
   }
 
   handleSubmit = helper => event =>{
-    alert("Notification sent!!")
     this.setState({
-      elder: localStorage.getItem('token'),
-      volunteer: helper.id
+      elder: helper.id,
+      volunteer: localStorage.getItem('token')
     })
     var body = this.state
     
     console.log(JSON.stringify({
-      elder: localStorage.getItem('token'),
-      volunteer: helper.id
+      elder: helper.id,
+      volunteer: localStorage.getItem('token')
     }))
     // this.state.volunteer = volunteer.id
-    fetch('http://127.0.0.1:8000/api/Addelders/', {
+    fetch('http://127.0.0.1:8000/api/Deleteelders/', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        elder: localStorage.getItem('token'),
-        volunteer: helper.id
+        elder: helper.id,
+        volunteer: localStorage.getItem('token')
       })
     }).then(function(response) {
       
@@ -106,46 +119,35 @@ class VolunteerList extends Component {
     var val;
     return (
       <div className={classes.root}>
-      <Typography className={classes.typography}>List of Volunteers</Typography>
+      <Typography className={classes.typography}>List of Elders</Typography>
       <Grid container justify="space-evenly">
-      {this.state.volunteers.length == 0 ? 
-      <Grid sm={5}>
-      <Card className={classes.card} >
-        <CardContent style={{alignContent: "center"}}>
-          <Typography variant="body2" color="secondary">
-            Oops!! No volunteers available now for the service you requested...
-          </Typography>
-          {/* <h6>{volunteer.services_available}</h6> */}
-        </CardContent>
-      </Card>
-      </Grid>
-      : this.state.volunteers.map(volunteer => (
-        // console.log("VOlunteer: ", volunteer.id),
+      {this.state.elderobjs.map(obj => (
         <Grid sm={5}>
         <Card className={classes.card}>
-          <CardHeader classes={{subheader: classes.subheader,}}
-            avatar={
-              <Avatar aria-label="person" className={classes.avatar}>
-                {volunteer.user.username[0]}
-              </Avatar>
-            }
-            title={volunteer.user.username}
-            subheader={volunteer.phone_no}
-            
-            action={
-              <span>
-                {/* <PhoneIcon/> */}
-                <Button variant="contained" onClick={this.handleSubmit(volunteer)}>Ask</Button>
-              </span>
-              
-            }
-          />
+            <CardHeader 
+                    avatar={
+                        <Avatar aria-label="person" className={classes.avatar}>
+                          {obj.user.username[0]}
+                        </Avatar>
+                      }
+                title={obj.user.username} 
+                subheader={obj.user.email}
+                action={
+                    <span>
+                      {/* <PhoneIcon/> */}
+                      <Button variant="contained" onClick={this.handleSubmit(obj)}>Ask</Button>
+                    </span>}
+                />
           <CardContent>
             <Typography variant="body2" color="secondary" component="p">
-            Alyssa Barnes is a 23-year-old health centre receptionist who enjoys cycling, swimming and reading. She is smart and generous
+                Age: {obj.elder_age}
             </Typography>
-            {/* <h6>{volunteer.services_available}</h6> */}
-            {/*  */}
+            <Typography variant="body2" color="secondary" component="p">
+                Phone No: {obj.phone_no} 
+            </Typography>
+            <Typography variant="body2" color="secondary" component="p">
+                Address: {obj.address_line1}, {obj.address_line2},  {obj.area},  {obj.city},  {obj.state},  {obj.country},  {obj.pincode}
+            </Typography>
             
           </CardContent>
         </Card>
@@ -158,4 +160,4 @@ class VolunteerList extends Component {
 }
 }
 
-export default withStyles(useStyles)(VolunteerList);
+export default withStyles(useStyles)(ElderList);

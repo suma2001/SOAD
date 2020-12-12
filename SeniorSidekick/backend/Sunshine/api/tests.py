@@ -6,7 +6,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase,APIClient
 
-from .models import Experience, Service, TestVolunteer,Elder, Feedback
+from .models import Address, Experience, Service, TestVolunteer,Elder, Feedback
 from .serializers import CustomUserSerializer,ServiceSerializer,UserSerializer,RegisterTestVolunteerSerializer,RegisterElderSerializer,FeedbackSerializer
 from django.utils import timezone
 import pytz
@@ -32,10 +32,10 @@ class Models_TestCase(TestCase):
         self.state = "Telangana"
         self.country = "India"
         self.pincode = "500094"
-        # self.address = Address(address_line1 = self.address_line1,address_line2 = self.address_line2,
-        #                         area=self.area,city=self.city,state=self.state,country=self.country,
-        #                         pincode = self.pincode)
-        # self.address_old_count = Address.objects.count()
+        self.address = Address(address_line1 = self.address_line1,address_line2 = self.address_line2,
+                                area=self.area,city=self.city,state=self.state,country=self.country,
+                                pincode = self.pincode)
+        self.address_old_count = Address.objects.count()
 
         #Experience
     
@@ -46,17 +46,17 @@ class Models_TestCase(TestCase):
 
         #Volunteer
         self.experience.save()
-        # self.address.save()
+        self.address.save()
         self.username = "bugsbunny"
         self.email = "testcase@gmail.com"
         self.name = "test_volunteer"
         self.age = 23
         self.phone_no = "9848000000" 
-        # self.address = self.address
+        self.address = self.address
         self.biography = "I am a test case"
         self.availability  = True
         self.services_available = self.service
-        # self.location = "SRID=4326;POINT (32.43164062048556 -3.337956638610946)"
+        self.location = "SRID=4326;POINT (32.43164062048556 -3.337956638610946)"
         self.password = "hi123@456"
         self.experience = [self.experience.id]
 
@@ -65,15 +65,12 @@ class Models_TestCase(TestCase):
         self.user = User.objects.create_user(username=self.username,password = self.password,email = self.email) 
 
         self.profile = TestVolunteer(user = self.user,volunteer_age = self.age,
-                                phone_no=self.phone_no,availability = self.availability,services_available=self.services_available,
-                                address_line1=self.address_line1,address_line2=self.address_line2,area=self.area,city=self.city,
-                                state=self.state,country=self.country,pincode=self.pincode)
+                                phone_no=self.phone_no,address = self.address,
+                                availability = self.availability,services_available=self.services_available,location=self.location)
 
         #Elder
         self.elder = Elder(user = self.user,elder_age = self.age,
-                                phone_no=self.phone_no,address_line1=self.address_line1,
-                                address_line2=self.address_line2,area=self.area,city=self.city,state=self.state,country=self.country,
-                                pincode=self.pincode)
+                                phone_no=self.phone_no,address = self.address,location=self.location)
 
         #Feedback
         self.time = timezone.now()
@@ -83,9 +80,9 @@ class Models_TestCase(TestCase):
                                 rating = self.rating,custom_feedback = self.custom_feedback)
         
 
-    # def test_model_can_create_an_address(self):
-    #     new_count = Address.objects.count()
-    #     self.assertEqual(self.address_old_count+1, new_count)
+    def test_model_can_create_an_address(self):
+        new_count = Address.objects.count()
+        self.assertEqual(self.address_old_count+1, new_count)
     
     def test_model_can_create_a_service(self):
         new_count = Service.objects.count()
@@ -226,33 +223,30 @@ class DeleteSingleServiceTest(TestCase):
             reverse('get_delete_update_service', kwargs={'id': 10000}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-# # #Profiles
+# #Profiles
 
 class CreateProfile():
     
     def __init__(self):
-        # self.location = "SRID=4326;POINT (32.43164062048556 -3.337956638610946)"
+        self.location = "SRID=4326;POINT (32.43164062048556 -3.337956638610946)"
 
         self.service = Service.objects.create(name="Groceries",description="Delivering the groceries")
 
-        # self.address = Address.objects.create(address_line1 = "H No: 16-2-398/12,Sai Colony",
-        #                   address_line2 = "Opp KLM shopping mall", area = "Jubilee Hills", 
-        #                    city = "Hyderabad", state = "Telangana", country = "India",pincode = "500094")
+        self.address = Address.objects.create(address_line1 = "H No: 16-2-398/12,Sai Colony",
+                          address_line2 = "Opp KLM shopping mall", area = "Jubilee Hills", 
+                           city = "Hyderabad", state = "Telangana", country = "India",pincode = "500094")
 
         self.experience = Experience(type_of_service=self.service)
 
         self.user = User.objects.create_user(username="bugsbunny",password = "hello@123",email = "bugs@bunny.com") 
 
         self.volunteer = TestVolunteer.objects.create(user = self.user,volunteer_age = 23,
-                                phone_no="9848000000", availability = True,services_available=self.service,
-                                address_line1 = "H No: 16-2-398/12,Sai Colony",address_line2 = "Opp KLM shopping mall",
-                                area = "Jubilee Hills", city = "Hyderabad", state = "Telangana", country = "India",pincode = "500094")
+                                phone_no="9848000000",address = self.address, availability = True,
+                                services_available=self.service,location=self.location)
 
 class Payload():
 
     def __init__(self):
-
-        User = get_user_model()
 
         service = {
             'name' : "Medicines",
@@ -268,17 +262,14 @@ class Payload():
         #     'country' : "India",
         #     'pincode' : "500094"
         # }
-        # addr = Address.objects.create(address_line1 = "H No: 16-2-398/12,Sai Colony",
-        #                   address_line2 = "Opp KLM shopping mall", area = "Jubilee Hills", 
-        #                    city = "Hyderabad", state = "Telangana", country = "India",pincode = "500094")
+        addr = Address.objects.create(address_line1 = "H No: 16-2-398/12,Sai Colony",
+                          address_line2 = "Opp KLM shopping mall", area = "Jubilee Hills", 
+                           city = "Hyderabad", state = "Telangana", country = "India",pincode = "500094")
 
         exp = Experience.objects.create(type_of_service= groceries)
         print(exp.id)
 
-        username = "BugsBunny13"
-        email = "bugsbunny@gmail.com"
-        password = "hi123@456"
-
+        
         # find_user = User.objects.filter(username=username)
         # print(find_user)
         # if not find_user:
@@ -287,26 +278,16 @@ class Payload():
         #     create_user.save()
         # else:
         #     create_user = find_user[0]
-        #     print("In 2")
-        #     print(create_user)
-        self.user = {'username' : username,
-                    'email' : email,
-                    'password' : password
+        self.user = {'username' : "HorridHenry",
+                    'email' : "bugsbunny@gmail.com",
+                    'password' : "hi123@456"
                     }
-        # self.user = json.dumps(create_user)
-        self.address_line1 = "H No: 16-2-398/12,Sai Colony"
-        self.address_line2 = "Opp KLM shopping mall"
-        self.area = "Jubilee Hills"
-        self.city = "Hyderabad"
-        self.state = "Telangana"
-        self.country = "India"
-        self.pincode = "500094"
+        self.address = addr.pk
         self.volunteer_age = 13
         self.phone_no = "9848000007"
         self.availability = True
-
         self.services_available = groceries.pk
-        self.location = None
+        self.location = "SRID=4326;POINT (32.43164062048556 -3.337956638610946)"
     
     def payload_with_no_user(self):
         self.user=None
@@ -314,8 +295,8 @@ class Payload():
     # def payload_with_no_email(self):
     #     self.email = ""
 
-    # def payload_with_no_address(self):
-    #     self.address = ""
+    def payload_with_no_address(self):
+        self.address = ""
 
     # def payload_with_no_name(self):
     #     self.name=""
@@ -323,34 +304,14 @@ class Payload():
     def payload_with_no_phone_number(self):
         self.phone_no=""
 
-    def payload_with_no_address_line1(self):
-        self.address_line1 = ""
-    
-    
-    def payload_with_no_area(self):
-        self.area = ""
-    
-    def payload_with_no_city(self):
-        self.city = ""
-    
-    def payload_with_no_state(self):
-        self.state = ""
-    
-    def payload_with_no_country(self):
-        self.country = ""
-
-    def payload_with_no_pincode(self):
-        self.pincode = ""
-
-    def payload_with_no_age(self):
-        self.volunteer_age = ""
-    
+    def payload_with_no_location(self):
+        self.location = ""
        
 class GetAllProfilesTest(TestCase):
     
     def test_profile_get_all_api(self):
         response = self.client.get(
-            reverse('get_profiles'))
+            reverse('get_post_profiles'))
         # import pdb
         # pdb.set_trace()
         profiles = TestVolunteer.objects.all()
@@ -364,19 +325,16 @@ class GetSingleProfileTest(TestCase):
     def setUp(self):
 
         self.instance = CreateProfile()
-        print("#"+str(self.instance.volunteer.location))
+        print("#"+str(self.instance.volunteer.id))
 
     def test_get_valid_single_profile(self):
         response = self.client.get(
             reverse('get_delete_update_profile',kwargs={'id':self.instance.volunteer.id})
         )
         profile = TestVolunteer.objects.get(id=self.instance.volunteer.id)
-        # print("$"+str(profile.location))
         serializer = RegisterTestVolunteerSerializer(profile)
-        # import pdb
-        # pdb.set_trace()
+
         self.assertEqual(response.data,serializer.data)
-        # self.assertIsNotNone(profile.location)
         self.assertEqual(response.status_code,status.HTTP_200_OK) 
 
     def test_get_invalid_single_profile(self):
@@ -394,104 +352,70 @@ class CreateNewProfileTest(TestCase):
 
     def test_create_valid_profile(self):
         response = self.client.post(
-            reverse('register'),
+            reverse('get_post_profiles'),
             data=json.dumps(self.instance.__dict__),
             content_type='application/json'
         )
+        # import pdb
+        # pdb.set_trace()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_invalid_profile_with_no_user(self):
         invalid_payload = Payload().payload_with_no_user()
-        
         response = self.client.post(
-            reverse('register'),
+            reverse('get_post_profiles'),
             data=json.dumps(invalid_payload),
             content_type='application/json'
         )
-       
+        # import pdb
+        # pdb.set_trace()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
     
+    # def test_create_invalid_profile_with_no_email(self):
+    #     invalid_payload = Payload().payload_with_no_email()
+    #     response = self.client.post(
+    #         reverse('get_post_profiles'),
+    #         data=json.dumps(invalid_payload),
+    #         content_type='application/json'
+    #     )
+    #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_create_invalid_profile_with_no_address(self):
+        invalid_payload = Payload().payload_with_no_address()
+        response = self.client.post(
+            reverse('get_post_profiles'),
+            data=json.dumps(invalid_payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    # def test_create_invalid_profile_with_no_name(self):
+    #     invalid_payload = Payload().payload_with_no_name()
+    #     response = self.client.post(
+    #         reverse('get_post_profiles'),
+    #         data=json.dumps(invalid_payload),
+    #         content_type='application/json'
+    #     )
+    #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
     
     def test_create_invalid_profile_with_no_phone_number(self):
         invalid_payload = Payload().payload_with_no_phone_number()
         response = self.client.post(
-            reverse('register'),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_create_invalid_profile_with_no_address_line1(self):
-        invalid_payload = Payload().payload_with_no_address_line1()
-        response = self.client.post(
-            reverse('register'),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    # def test_create_invalid_profile_with_no_address_line2(self):
-    #     invalid_payload = Payload().payload_with_no_address_line2()
-    #     response = self.client.post(
-    #         reverse('register'),
-    #         data=json.dumps(invalid_payload),
-    #         content_type='application/json'
-    #     )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_create_invalid_profile_with_no_area(self):
-        invalid_payload = Payload().payload_with_no_area()
-        response = self.client.post(
-            reverse('register'),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_create_invalid_profile_with_no_city(self):
-        invalid_payload = Payload().payload_with_no_city()
-        response = self.client.post(
-            reverse('register'),
+            reverse('get_post_profiles'),
             data=json.dumps(invalid_payload),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_create_invalid_profile_with_no_state(self):
-        invalid_payload = Payload().payload_with_no_state()
+    def test_create_invalid_profile_with_no_location(self):
+        invalid_payload = Payload().payload_with_no_location()
         response = self.client.post(
-            reverse('register'),
+            reverse('get_post_profiles'),
             data=json.dumps(invalid_payload),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_create_invalid_profile_with_no_country(self):
-        invalid_payload = Payload().payload_with_no_country()
-        response = self.client.post(
-            reverse('register'),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_create_invalid_profile_with_no_pincode(self):
-        invalid_payload = Payload().payload_with_no_pincode()
-        response = self.client.post(
-            reverse('register'),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_create_invalid_profile_with_no_age(self):
-        invalid_payload = Payload().payload_with_no_age()
-        response = self.client.post(
-            reverse('register'),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 class UpdateSingleProfileTest(TestCase):
 
@@ -521,6 +445,33 @@ class UpdateSingleProfileTest(TestCase):
         # pdb.set_trace()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
     
+    # def test_update_invalid_profile_with_no_email(self):
+    #     invalid_payload = Payload().payload_with_no_email()
+    #     response = self.client.put(
+    #         reverse('get_delete_update_profile', kwargs={'id':self.profile.volunteer.id}),
+    #         data=json.dumps(invalid_payload),
+    #         content_type='application/json'
+    #     )
+    #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_update_invalid_profile_with_no_address(self):
+        invalid_payload = Payload().payload_with_no_address()
+        response = self.client.put(
+            reverse('get_delete_update_profile', kwargs={'id':self.profile.volunteer.id}),
+            data=json.dumps(invalid_payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    # def test_update_invalid_profile_with_no_name(self):
+    #     invalid_payload = Payload().payload_with_no_name()
+    #     response = self.client.put(
+    #         reverse('get_delete_update_profile', kwargs={'id':self.profile.volunteer.id}),
+    #         data=json.dumps(invalid_payload),
+    #         content_type='application/json'
+    #     )
+    #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    
     def test_update_invalid_profile_with_no_phone_number(self):
         invalid_payload = Payload().payload_with_no_phone_number()
         response = self.client.put(
@@ -529,72 +480,9 @@ class UpdateSingleProfileTest(TestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_update_invalid_profile_with_no_address_line1(self):
-        invalid_payload = Payload().payload_with_no_address_line1()
-        response = self.client.put(
-            reverse('get_delete_update_profile', kwargs={'id':self.profile.volunteer.id}),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_update_invalid_profile_with_no_address_line2(self):
-        invalid_payload = Payload().payload_with_no_address_line2()
-        response = self.client.put(
-            reverse('get_delete_update_profile', kwargs={'id':self.profile.volunteer.id}),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_update_invalid_profile_with_no_area(self):
-        invalid_payload = Payload().payload_with_no_area()
-        response = self.client.put(
-            reverse('get_delete_update_profile', kwargs={'id':self.profile.volunteer.id}),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_update_invalid_profile_with_no_city(self):
-        invalid_payload = Payload().payload_with_no_city()
-        response = self.client.put(
-            reverse('get_delete_update_profile', kwargs={'id':self.profile.volunteer.id}),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_update_invalid_profile_with_no_state(self):
-        invalid_payload = Payload().payload_with_no_state()
-        response = self.client.put(
-            reverse('get_delete_update_profile', kwargs={'id':self.profile.volunteer.id}),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_update_invalid_profile_with_no_country(self):
-        invalid_payload = Payload().payload_with_no_country()
-        response = self.client.put(
-            reverse('get_delete_update_profile', kwargs={'id':self.profile.volunteer.id}),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_update_invalid_profile_with_no_pincode(self):
-        invalid_payload = Payload().payload_with_no_pincode()
-        response = self.client.put(
-            reverse('get_delete_update_profile', kwargs={'id':self.profile.volunteer.id}),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_update_invalid_profile_with_no_age(self):
-        invalid_payload = Payload().payload_with_no_age()
+    def test_update_invalid_profile_with_no_location(self):
+        invalid_payload = Payload().payload_with_no_location()
         response = self.client.put(
             reverse('get_delete_update_profile', kwargs={'id':self.profile.volunteer.id}),
             data=json.dumps(invalid_payload),
@@ -618,85 +506,57 @@ class DeleteSingleProfileTest(TestCase):
             reverse('get_delete_update_profile', kwargs={'id': 10000}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-#Elder Profile
+# #Elder Profile
 
 class Create_Elder_Profile():
     
     def __init__(self):
-#         self.location = "SRID=4326;POINT (32.43164062048556 -3.337956638610946)"
+        self.location = "SRID=4326;POINT (32.43164062048556 -3.337956638610946)"
 
         self.user = User.objects.create_user(username="bugsbunny",password = "hello@123",email = "bugs@bunny.com") 
 
-#         self.address = Address.objects.create(address_line1 = "H No: 16-2-398/12,Sai Colony",
-#                           address_line2 = "Opp KLM shopping mall", area = "Jubilee Hills", 
-#                            city = "Hyderabad", state = "Telangana", country = "India",pincode = "500094")
+        self.address = Address.objects.create(address_line1 = "H No: 16-2-398/12,Sai Colony",
+                          address_line2 = "Opp KLM shopping mall", area = "Jubilee Hills", 
+                           city = "Hyderabad", state = "Telangana", country = "India",pincode = "500094")
 
-        self.elder  = Elder.objects.create(user = self.user,elder_age = 72,phone_no="9848131313",address_line1 = "H No: 16-2-398/12,Sai Colony",
-                                            address_line2 = "Opp KLM shopping mall",area = "Jubilee Hills", city = "Hyderabad",
-                                            state = "Telangana", country = "India",pincode = "500094")
+        self.elder  = Elder.objects.create(user = self.user,elder_age = 72,phone_no="9848131313",address = self.address,location=self.location)
 
 class Elder_Payload():
 
     def __init__(self):
 
-        # addr = Address.objects.create(address_line1 = "H No: 16-2-398/12,Sai Colony",
-        #                   address_line2 = "Opp KLM shopping mall", area = "Jubilee Hills", 
-        #                    city = "Hyderabad", state = "Telangana", country = "India",pincode = "500094")
+        addr = Address.objects.create(address_line1 = "H No: 16-2-398/12,Sai Colony",
+                          address_line2 = "Opp KLM shopping mall", area = "Jubilee Hills", 
+                           city = "Hyderabad", state = "Telangana", country = "India",pincode = "500094")
 
         self.user = {'username' : "Doreamon",
                     'email' : "bugsbunny@gmail.com",
                     'password' : "hi123@456"
                     }
-        # self.address = addr.pk
+        self.address = addr.pk
         self.elder_age = 72
         self.phone_no = "9848000007"
-        self.location = None
-        self.address_line1 = "H No: 16-2-398/12,Sai Colony"
-        self.address_line2 = "Opp KLM shopping mall"
-        
-        self.area = "Jubilee Hills"
-        self.city = "Hyderabad"
-        self.state = "Telangana"
-        self.country = "India"
-        self.pincode = "500094"
-        self.area = "Jubilee Hills"
-        self.city = "Hyderabad"
-        self.state = "Telangana"
-        self.country = "India"
-        self.pincode = "500094"
+        self.location = "SRID=4326;POINT (32.43164062048556 -3.337956638610946)"
     
     def elder_payload_with_no_user(self):
         self.user=""
     
+    def elder_payload_with_no_address(self):
+        self.address = ""
+    
     def elder_payload_with_no_phone_number(self):
         self.phone_no=""
 
-    def elder_payload_with_no_address_line1(self):
-        self.address_line1 = ""
-    
-    def elder_payload_with_no_area(self):
-        self.area = ""
-    
-    def elder_payload_with_no_city(self):
-        self.city = ""
-    
-    def elder_payload_with_no_state(self):
-        self.state = ""
-    
-    def elder_payload_with_no_country(self):
-        self.country = ""
+    def elder_payload_with_no_location(self):
+        self.location = ""
+       
 
-    def elder_payload_with_no_pincode(self):
-        self.pincode = ""
 
-    def elder_payload_with_no_age(self):
-        self.elder_age = ""
-    
 class GetAll_ElderProfiles_Test(TestCase):
     
     def test_elder_profile_get_all_api(self):
         response = self.client.get(
-            reverse('get_elder_profiles'))
+            reverse('get_post_elder_profiles'))
         # import pdb
         # pdb.set_trace()
         elder_profiles = Elder.objects.all()
@@ -719,7 +579,6 @@ class GetSingle_ElderProfile_Test(TestCase):
         serializer = RegisterElderSerializer(profile)
 
         self.assertEqual(response.data,serializer.data)
-        # self.assertIsNotNone(response.data['location'])
         self.assertEqual(response.status_code,status.HTTP_200_OK) 
 
     def test_get_invalid_single_elder_profile(self):
@@ -735,7 +594,7 @@ class CreateNew_ElderProfile_Test(TestCase):
 
     def test_create_valid_elder_profile(self):
         response = self.client.post(
-            reverse('elderregister'),
+            reverse('get_post_elder_profiles'),
             data=json.dumps(self.instance.__dict__),
             content_type='application/json'
         )
@@ -746,7 +605,7 @@ class CreateNew_ElderProfile_Test(TestCase):
     def test_create_invalid_elder_profile_with_no_user(self):
         invalid_payload = Elder_Payload().elder_payload_with_no_user()
         response = self.client.post(
-            reverse('elderregister'),
+            reverse('get_post_elder_profiles'),
             data=json.dumps(invalid_payload),
             content_type='application/json'
         )
@@ -754,82 +613,28 @@ class CreateNew_ElderProfile_Test(TestCase):
         # pdb.set_trace()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
     
+    def test_create_invalid_elder_profile_with_no_address(self):
+        invalid_payload = Elder_Payload().elder_payload_with_no_address()
+        response = self.client.post(
+            reverse('get_post_elder_profiles'),
+            data=json.dumps(invalid_payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    
     def test_create_invalid_elder_profile_with_no_phone_number(self):
         invalid_payload = Elder_Payload().elder_payload_with_no_phone_number()
         response = self.client.post(
-            reverse('elderregister'),
+            reverse('get_post_elder_profiles'),
             data=json.dumps(invalid_payload),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_create_invalid_elder_profile_with_no_address_line1(self):
-        invalid_payload = Elder_Payload().elder_payload_with_no_address_line1()
+    def test_create_invalid_elder_profile_with_no_location(self):
+        invalid_payload = Elder_Payload().elder_payload_with_no_location()
         response = self.client.post(
-            reverse('elderregister'),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    # def test_create_invalid_elder_profile_with_no_address_line2(self):
-    #     invalid_payload = Elder_Payload().elder_payload_with_no_address_line2()
-    #     response = self.client.post(
-    #         reverse('elderregister'),
-    #         data=json.dumps(invalid_payload),
-    #         content_type='application/json'
-    #     )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_create_invalid_elder_profile_with_no_area(self):
-        invalid_payload = Elder_Payload().elder_payload_with_no_area()
-        response = self.client.post(
-            reverse('elderregister'),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_create_invalid_elder_profile_with_no_city(self):
-        invalid_payload = Elder_Payload().elder_payload_with_no_city()
-        response = self.client.post(
-            reverse('elderregister'),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_create_invalid_elder_profile_with_no_state(self):
-        invalid_payload = Elder_Payload().elder_payload_with_no_state()
-        response = self.client.post(
-            reverse('elderregister'),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_create_invalid_elder_profile_with_no_country(self):
-        invalid_payload = Elder_Payload().elder_payload_with_no_country()
-        response = self.client.post(
-            reverse('elderregister'),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_create_invalid_elder_profile_with_no_pincode(self):
-        invalid_payload = Elder_Payload().elder_payload_with_no_pincode()
-        response = self.client.post(
-            reverse('elderregister'),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_create_invalid_elder_profile_with_no_age(self):
-        invalid_payload = Elder_Payload().elder_payload_with_no_age()
-        response = self.client.post(
-            reverse('elderregister'),
+            reverse('get_post_elder_profiles'),
             data=json.dumps(invalid_payload),
             content_type='application/json'
         )
@@ -864,6 +669,15 @@ class UpdateSingle_ElderProfile_Test(TestCase):
         # pdb.set_trace()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
     
+    def test_update_invalid_elder_profile_with_no_address(self):
+        invalid_payload = Elder_Payload().elder_payload_with_no_address()
+        response = self.client.put(
+            reverse('get_delete_update_elder_profile', kwargs={'id':self.profile.elder.id}),
+            data=json.dumps(invalid_payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    
     def test_update_invalid_elder_profile_with_no_phone_number(self):
         invalid_payload = Elder_Payload().elder_payload_with_no_phone_number()
         response = self.client.put(
@@ -873,71 +687,8 @@ class UpdateSingle_ElderProfile_Test(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_update_invalid_elder_profile_with_no_address_line1(self):
-        invalid_payload = Elder_Payload().elder_payload_with_no_address_line1()
-        response = self.client.put(
-            reverse('get_delete_update_elder_profile', kwargs={'id':self.profile.elder.id}),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    # def test_update_invalid_elder_profile_with_no_address_line2(self):
-    #     invalid_payload = Elder_Payload().elder_payload_with_no_address_line2()
-    #     response = self.client.put(
-    #         reverse('get_delete_update_elder_profile', kwargs={'id':self.profile.elder.id}),
-    #         data=json.dumps(invalid_payload),
-    #         content_type='application/json'
-    #     )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_update_invalid_elder_profile_with_no_area(self):
-        invalid_payload = Elder_Payload().elder_payload_with_no_area()
-        response = self.client.put(
-            reverse('get_delete_update_elder_profile', kwargs={'id':self.profile.elder.id}),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_update_invalid_elder_profile_with_no_city(self):
-        invalid_payload = Elder_Payload().elder_payload_with_no_city()
-        response = self.client.put(
-            reverse('get_delete_update_elder_profile', kwargs={'id':self.profile.elder.id}),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_update_invalid_elder_profile_with_no_state(self):
-        invalid_payload = Elder_Payload().elder_payload_with_no_state()
-        response = self.client.put(
-            reverse('get_delete_update_elder_profile', kwargs={'id':self.profile.elder.id}),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_update_invalid_elder_profile_with_no_country(self):
-        invalid_payload = Elder_Payload().elder_payload_with_no_country()
-        response = self.client.put(
-            reverse('get_delete_update_elder_profile', kwargs={'id':self.profile.elder.id}),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_update_invalid_elder_profile_with_no_pincode(self):
-        invalid_payload = Elder_Payload().elder_payload_with_no_pincode()
-        response = self.client.put(
-            reverse('get_delete_update_elder_profile', kwargs={'id':self.profile.elder.id}),
-            data=json.dumps(invalid_payload),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
-    def test_update_invalid_elder_profile_with_no_age(self):
-        invalid_payload = Elder_Payload().elder_payload_with_no_age()
+    def test_update_invalid_elder_profile_with_no_location(self):
+        invalid_payload = Elder_Payload().elder_payload_with_no_location()
         response = self.client.put(
             reverse('get_delete_update_elder_profile', kwargs={'id':self.profile.elder.id}),
             data=json.dumps(invalid_payload),
@@ -1039,4 +790,3 @@ class CreateNewFeedbackTest(TestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-

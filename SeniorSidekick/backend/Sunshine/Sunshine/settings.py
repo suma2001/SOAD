@@ -62,6 +62,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',  # <-- And here
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'knox.auth.TokenAuthentication',
     ],
 }
 
@@ -109,7 +110,7 @@ DATABASES = {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'Shreya@2001',
+        'PASSWORD': 'hemanth21k',
         'HOST': 'localhost',
         'PORT': '5432',  #check your port number
     }

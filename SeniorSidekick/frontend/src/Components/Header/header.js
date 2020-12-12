@@ -31,7 +31,7 @@ class Header extends React.Component {
     //   }
 
     componentDidMount() {
-        const apiUrl = 'http://127.0.0.1:8000/api/currentuser/';
+        const apiUrl = 'http://127.0.0.1:8000/api/currentuser/'+localStorage.getItem('token')+'/';
         fetch(apiUrl)
           .then((response) => response.json())
           .then((data) => console.log('This is your data', data));

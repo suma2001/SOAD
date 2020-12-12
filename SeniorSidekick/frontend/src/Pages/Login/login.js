@@ -71,7 +71,9 @@ class Login extends React.Component {
       username: '',
       password: '',
       validationError: '',
-      isLoggedIn: false
+      isLoggedIn: false,
+      expiry: "",
+      token: ""
     }
   }
 
@@ -101,12 +103,19 @@ class Login extends React.Component {
       body: JSON.stringify(body)
     }).then(function(response) {
       console.log(response)
-      if (response.status === 200){
-        return <Redirect push to="/" />
-      }
+      // if (response.status === 200){
+      //   return <Redirect push to="/" />
+      // }
       return response.json();
+    }).then(function(response) {
+      console.log(response);
+      localStorage.setItem('token', response.token);
+      return <Redirect push to="/" />
+    //   this.setState({ 
+    //     expiry: response.expiry,
+    //     token: response.token });
     });
-  
+    console.log(this.state.expiry, this.state.token);
     event.preventDefault();
     
     // const { history } = this.props;
@@ -173,7 +182,6 @@ class Login extends React.Component {
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                href="/"
               >
                 Sign In
               </Button>

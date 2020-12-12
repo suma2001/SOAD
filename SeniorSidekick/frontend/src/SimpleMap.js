@@ -41,7 +41,7 @@ import React, { Component } from 'react';
 
 const mapStyles = {
   width: '100%',
-  height: '100%',
+  height: '70%',
 };
 
 class SimpleMap extends Component {
@@ -84,15 +84,18 @@ class SimpleMap extends Component {
 
   render() {
     return (
+      <div>
         <Map
           google={this.props.google}
-          zoom={8}
+          zoom={5}
           style={mapStyles}
           initialCenter={{ lat: 20.5937, lng: 78.9629}}
         >
           {/* <Marker position={{ lat: 48.00, lng: -122.00}} /> */}
           {this.displayMarkers()}
         </Map>
+      </div>
+      
     );
   }
 }

@@ -10,7 +10,7 @@ import FacebookIcon from '@material-ui/icons/Facebook';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    flexGrow: 1,
+    // flexGrow: 1,
   },
   control: {
     padding: theme.spacing(2),

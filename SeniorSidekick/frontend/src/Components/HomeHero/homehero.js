@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function HomeHero() {
   const classes = useStyles();
+  console.log(localStorage.getItem('token'));
 
   return (
     <Container style={{backgroundColor: "#efeaf0"}} className={classes.control}>

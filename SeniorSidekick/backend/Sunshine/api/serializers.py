@@ -7,19 +7,23 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 # from drf_writable_nested.serializers import WritableNestedModelSerializer
 from googlemaps import Client as GoogleMaps
+from django.contrib.auth import logout, authenticate
 
 User = get_user_model()  # custom user model
 
-def getLocation(address_line1,address_line2,area,city,state,country,pincode):
+
+def getLocation(address_line1, address_line2, area, city, state, country, pincode):
     gmaps = GoogleMaps('AIzaSyBoy1plslvW_UTSM3JTWNLijJL1KjsKf60')
-    address = str(address_line1)+ ',' + str(address_line2)+ ',' + str(area) + ',' + str(city) + ',' + str(state) + ',' + str(country) + ',' + str(pincode)
+    address = str(address_line1) + ',' + str(address_line2) + ',' + str(area) + ',' + str(city) + ',' + str(
+        state) + ',' + str(country) + ',' + str(pincode)
     geocode_result = gmaps.geocode(address)
-    lat = geocode_result[0]['geometry']['location'] ['lat']
+    lat = geocode_result[0]['geometry']['location']['lat']
     lon = geocode_result[0]['geometry']['location']['lng']
-    print(lat,lon)
-    location = "SRID=4326;POINT ("+str(lat) + " " + str(lon)+")"
+    print(lat, lon)
+    location = "SRID=4326;POINT (" + str(lat) + " " + str(lon) + ")"
     print(location)
     return location
+
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,9 +48,9 @@ class ServiceSerializer(serializers.ModelSerializer):
 
 # User Serializer
 class UserSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = User
-    fields = ('id', 'username', 'email')
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email')
 
 
 # Register Serializer
@@ -55,8 +59,9 @@ class RegisterTestVolunteerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TestVolunteer
-        fields = ['id', 'user', 'volunteer_age', 'phone_no', 'availability', 'location', 'services_available','address_line1','address_line2',
-                    'area','city','state','country','pincode']
+        fields = ['id', 'user', 'volunteer_age', 'phone_no', 'availability', 'elder_ids', 'location',
+                  'services_available', 'address_line1', 'address_line2',
+                  'area', 'city', 'state', 'country', 'pincode']
         read_only_fields = ('email',)
 
     def create(self, validated_data):
@@ -90,7 +95,7 @@ class RegisterTestVolunteerSerializer(serializers.ModelSerializer):
         volunteer.state = state
         volunteer.country = country
         volunteer.pincode = pincode
-        volunteer.location = getLocation(address_line1,address_line2,area,city,state,country,pincode)
+        volunteer.location = getLocation(address_line1, address_line2, area, city, state, country, pincode)
         volunteer.save()
         print(volunteer.location)
         return volunteer
@@ -121,8 +126,8 @@ class RegisterElderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Elder
         fields = ['id', 'user', 'elder_age',
-                  'phone_no', 'location','address_line1','address_line2',
-                    'area','city','state','country','pincode']
+                  'phone_no', 'location', 'address_line1', 'address_line2',
+                  'area', 'city', 'state', 'country', 'pincode']
         read_only_fields = ('email',)
 
     def create(self, validated_data):
@@ -133,27 +138,19 @@ class RegisterElderSerializer(serializers.ModelSerializer):
                                          email=user_data['email'],
                                          password=user_data['password'])
 
-        address_line1 = validated_data['address_line1']
-        address_line2 = validated_data['address_line2']
-        area = validated_data['area']
-        city = validated_data['city']
-        state = validated_data['state']
-        country = validated_data['country']
-        pincode = validated_data['pincode']
-
         elder = Elder()
         elder.user = user1
         elder.phone_no = validated_data['phone_no']
         # elder.address = validated_data['address']
+        elder.location = validated_data['location']
         elder.elder_age = validated_data['elder_age']
-        elder.address_line1 = address_line1
-        elder.address_line2 = address_line2
-        elder.area = area
-        elder.city = city
-        elder.state = state
-        elder.country = country
-        elder.pincode = pincode
-        elder.location = getLocation(address_line1,address_line2,area,city,state,country,pincode)
+        elder.address_line1 = validated_data['address_line1']
+        elder.address_line2 = validated_data['address_line2']
+        elder.area = validated_data['area']
+        elder.city = validated_data['city']
+        elder.state = validated_data['state']
+        elder.country = validated_data['country']
+        elder.pincode = validated_data['pincode']
         elder.save()
         return elder
 
@@ -173,21 +170,42 @@ class RegisterElderSerializer(serializers.ModelSerializer):
     #     each.location =  validated_data.get('location', each.location)
     #     each.save()
     #     return instance
-    
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        user = authenticate(**data)
+        if user and user.is_active:
+            return user
+        raise serializers.ValidationError("Incorrect Credentials")
+
+
 class RequestServiceSerializer(serializers.ModelSerializer):
     time = serializers.DateTimeField(format='%d-%m-%Y %H:%m')
+
     class Meta:
         model = Service
         fields = ['name', 'time']
 
-class DirectionsSerializer(serializers.Serializer):
-    distance = serializers.CharField(max_length = 20)
-    estimated_time = serializers.CharField(max_length = 20)
-    start_location = serializers.CharField(max_length = 1000)
-    end_location = serializers.CharField(max_length = 1000)
+
+class AddElderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AddElder
+        fields = ['elder', 'volunteer']
+
+
+class DeleteElderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeleteElder
+        fields = ['elder', 'volunteer']
+
 
 class FeedbackSerializer(serializers.ModelSerializer):
     time = serializers.DateTimeField(format='%d-%m-%Y %H:%m')
+
     class Meta:
         model = Feedback
         fields = ['volunteer_name', 'service_done', 'time', 'rating', 'custom_feedback']

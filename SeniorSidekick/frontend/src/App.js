@@ -13,6 +13,7 @@ import Profile from './Pages/Profile/profile';
 import ContactUs from './Pages/ContactUs/contact';
 import Feedback from './Pages/Feedback/feedback';
 import SimpleMap from './SimpleMap';
+import Elderlist from './Pages/ElderList/elderlist';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         </Route>
         <Route exact path="/register">
           <Register />
+          <Footer />
         </Route>
         <Route exact path="/request-service">
           <RequestService />
@@ -39,14 +41,19 @@ function App() {
           <VolunteerList />
           <Footer />
         </Route>
-        {/* <Route exact path="/profile">*/} {/*make this as /profile:id later for each volunteer*/}
-          {/* <Profile />
+        <Route exact path="/profile"> {/*make this as /profile:id later for each volunteer*/}
+          <Profile />
+          <Footer />
         </Route>
-        <Route exact path="/contact-us">
+        {/* <Route exact path="/contact-us">
           <ContactUs />
-          </Route> */}
+          </Route>  */}
         <Route exact path="/feedback">
           <Feedback />
+          <Footer />
+        </Route>
+        <Route exact path="/elders">
+          <Elderlist />
           <Footer />
         </Route>
         <Route exact path="/map">

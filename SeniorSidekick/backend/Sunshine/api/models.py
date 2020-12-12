@@ -29,11 +29,12 @@ class Service(models.Model):
     def __str__(self):
         return self.name
 
+
 class Experience(models.Model):
     date_of_service = models.DateTimeField(auto_now_add=True)
     type_of_service = models.ForeignKey('Service', on_delete=models.CASCADE)
 
-# class Address(models.Model):
+    # class Address(models.Model):
     # address_id = models.AutoField(primary_key=True, auto_created=True)
     # address_line1 = models.CharField(max_length=150)
     # address_line2 = models.CharField(max_length=150, blank=True)
@@ -46,11 +47,12 @@ class Experience(models.Model):
     def __str__(self):
         return self.city + ", " + self.state
 
+
 class TestVolunteer(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name="test_volunteer", null=True)
     volunteer_age = models.IntegerField(validators=[MinValueValidator(5), MaxValueValidator(100)])
     phone_no = models.CharField(max_length=10)
-    elder_ids = ArrayField(models.IntegerField(),null=True)
+    elder_ids = ArrayField(models.IntegerField(default=0), default=list)
     # address = models.ForeignKey('Address', on_delete=models.PROTECT)
     location = models.PointField(null=True)
     availability = models.BooleanField(default=False)
@@ -86,6 +88,16 @@ class Elder(models.Model):
         return self.user.username
 
 
+class AddElder(models.Model):
+    elder = models.CharField(max_length=150)  # elderToken
+    volunteer = models.IntegerField(default=0)
+
+
+class DeleteElder(models.Model):
+    elder = models.IntegerField(default=0)
+    volunteer = models.CharField(max_length=150)  # volunteerToken
+
+
 class Feedback(models.Model):
     volunteer_name = models.CharField(max_length=50)
     service_done = models.CharField(max_length=50)
@@ -103,4 +115,3 @@ class Feedback(models.Model):
 
     def __str__(self):
         return str(self.volunteer_name) + str(self.time)
-        

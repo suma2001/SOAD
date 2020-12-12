@@ -56,7 +56,7 @@ class ServiceForm extends React.Component {
     })
     .then(data => {
       let servicesFromApi = data.map(service => {
-        return {value: service.id, display: service.id}
+        return {value: service.id, display: service.name}
       });
       this.setState({
         services: [{value: '', display: '(Select the service)'}].concat(servicesFromApi)
